@@ -3,8 +3,8 @@
 Choose descriptive and meaningful branch names that convey the purpose of the branch. Use lowercase letters and hyphens or underscores to separate words. Avoid special characters and spaces.
 
 >Good examples:
->* feature/user-authentication
->* bugfix/error-handling
+>* feature/BRING-4-user-authentication
+>* bugfix/BRING-19-error-handling
 >
 <h2>2. Branch Types</h2>
 Define clear branch types to help categorize your branches. Common branch types include:
