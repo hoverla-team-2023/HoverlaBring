@@ -1,6 +1,7 @@
 package com.hoverla.bring.bringweb;
 
-import java.time.LocalDateTime;
-import java.util.*;
+/*
+*That's a class that provides fake data like DTOs entities and Data
+*/
 public class TestData {
 }
