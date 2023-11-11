@@ -22,9 +22,12 @@ Use pull requests to propose and review code changes before merging. Enforce cod
 3. Require automated tests and checks to pass before merging.
 4. Use automated code analysis tools when possible.
 5. Enforcing a minimum of **two** approvals for merging into the main branch helps ensure that changes have been thoroughly reviewed and meet the project's quality standard
+6. Branch should be squashed
+
+When you want to get an early feedback, and the PR is in progress please use draft pull requests.
 
 <h2>4. Commit Messages</h2>
-Write clear and informative commit messages.
+The commit message should starts with [BRING-7] and then informative commit messages.
 
 Follow a format like: **type: description**.
 
