@@ -7,4 +7,5 @@ public class BeanDefinition {
 
   private String beanName;
   private Class<?> targetClass;
+
 }

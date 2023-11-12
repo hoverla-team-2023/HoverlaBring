@@ -18,4 +18,5 @@ public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
   public BeanDefinition getBeanDefinition(String beanName) {
     return beanDefinitions.get(beanName);
   }
+
 }

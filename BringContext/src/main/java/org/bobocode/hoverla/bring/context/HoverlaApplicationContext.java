@@ -17,4 +17,5 @@ public class HoverlaApplicationContext implements ApplicationContext {
   public BeanFactory getBeanFactory() {
     return beanFactory;
   }
+
 }

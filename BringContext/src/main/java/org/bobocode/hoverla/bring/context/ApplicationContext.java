@@ -7,4 +7,5 @@ public interface ApplicationContext {
   ApplicationContext createApplicationContext(String path);
 
   BeanFactory getBeanFactory();
+
 }

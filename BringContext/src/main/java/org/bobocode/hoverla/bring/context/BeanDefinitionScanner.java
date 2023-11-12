@@ -9,4 +9,5 @@ public interface BeanDefinitionScanner {
   List<BeanDefinition> loadBeanDefinitions(String path);
 
   void registerBeanDefinitions(BeanDefinitionRegistry registry);
+
 }
