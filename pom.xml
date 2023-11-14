@@ -12,13 +12,14 @@
     <modules>
         <module>BringContext</module>
         <module>BringWeb</module>
+        <module>BringServletMappingDemo</module>
     </modules>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <lombok.version>1.18.26</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <junit.jupiter.version>5.9.2</junit.jupiter.version>
         <assertj.version>3.24.2</assertj.version>
         <reflections.version>0.10.2</reflections.version>
