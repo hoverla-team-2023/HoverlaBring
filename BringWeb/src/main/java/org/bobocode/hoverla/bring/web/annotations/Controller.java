@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used to mark a class as a controller.
+ * Use this annotation to mark a class as a controller.
  *
  * @see RequestMapping
  * @see RequestBody

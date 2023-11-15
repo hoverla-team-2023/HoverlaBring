@@ -12,6 +12,7 @@
     <modules>
         <module>BringContext</module>
         <module>BringWeb</module>
+        <module>BringWebDemo</module>
     </modules>
 
     <properties>
