@@ -2,7 +2,6 @@ package com.bobocode.hoverla.bring.demo.controller;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,12 +15,7 @@ public class BobocodeController {
 
   @RequestMapping("bobocode/hoverla")
   public HttpEntity<List<TeamDTO>> helloWorld(HttpServletRequest request, HttpServletResponse response) {
-    Map<String, List<String>> headers = new HashMap<>();
-    //  headers.put("Content-Type", List.of("application/json"));
-
-    String responseBody = "Hello, World!";
-
-    return new HttpEntity<>(List.of(new TeamDTO("hoverla")), headers);
+    return new HttpEntity<>(List.of(new TeamDTO("hoverla")), new HashMap<>());
   }
 
   @RequestMapping("bobocode/training")
