@@ -1,4 +1,4 @@
-package com.bobocode.hoverla.bring.demo.dispatcher;
+package com.bobocode.hoverla.bring.demo.dispatcher.mapping;
 
 import java.lang.reflect.Method;
 
@@ -20,12 +20,13 @@ public class Handler {
         this.path = path;
     }
 
-    public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
+    public Object handleRequest(HttpServletRequest request, HttpServletResponse response) {
         try {
             Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
-            method.invoke(controllerInstance, request, response);
+           return  method.invoke(controllerInstance, request, response);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 }

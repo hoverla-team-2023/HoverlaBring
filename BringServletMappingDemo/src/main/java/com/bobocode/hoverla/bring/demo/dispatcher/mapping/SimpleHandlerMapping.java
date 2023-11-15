@@ -1,4 +1,4 @@
-package com.bobocode.hoverla.bring.demo.dispatcher;
+package com.bobocode.hoverla.bring.demo.dispatcher.mapping;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.reflections.Reflections;
+
 import com.bobocode.hoverla.bring.demo.annotation.Controller;
 import com.bobocode.hoverla.bring.demo.annotation.RequestMapping;
 
-import org.reflections.Reflections;
-
-class SimpleHandlerMapping {
+public class SimpleHandlerMapping {
 
   private final PathSegmentTreeNode root = new PathSegmentTreeNode();
 
