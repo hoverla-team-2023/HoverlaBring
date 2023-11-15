@@ -6,12 +6,12 @@ import jakarta.servlet.ServletContext;
  * Initializes a servlet. It is invoked by {@link org.bobocode.hoverla.bring.web.initializers.BringServletContainerInitializer}
  * on application startup.
  * <p>
- * Consider extending {@link DispatcherServletInitializer} to easily register a {@link org.bobocode.hoverla.bring.web.servlet.DispatcherServlet}
+ * Consider extending {@link AbstractDispatcherServletInitializer} to easily register a {@link org.bobocode.hoverla.bring.web.servlet.DispatcherServlet}
  * in the servlet container.
  * </p>
  *
  * @see org.bobocode.hoverla.bring.web.initializers.BringServletContainerInitializer
- * @see DispatcherServletInitializer
+ * @see AbstractDispatcherServletInitializer
  */
 public interface ServletInitializer {
 

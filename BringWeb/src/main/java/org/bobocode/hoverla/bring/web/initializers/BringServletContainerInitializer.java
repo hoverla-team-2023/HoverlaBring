@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
  * </p>
  *
  * @see ServletInitializer
- * @see DispatcherServletInitializer
+ * @see AbstractDispatcherServletInitializer
  */
 @Slf4j
 @HandlesTypes(ServletInitializer.class)
@@ -38,11 +38,13 @@ public class BringServletContainerInitializer implements ServletContainerInitial
   public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
     log.trace("Initializing servlet container");
 
-    for (Class<?> c : classes) {
-      if (isServletInitializer(c)) {
-        var servletInitializer = (ServletInitializer) getInstance(c);
-        servletInitializer.onStartup(servletContext);
-      }
+    var initializerClass = classes.stream()
+      .filter(this::isServletInitializer)
+      .findFirst();
+
+    if (initializerClass.isPresent()) {
+      var servletInitializer = (ServletInitializer) getInstance(initializerClass.get());
+      servletInitializer.onStartup(servletContext);
     }
   }
 

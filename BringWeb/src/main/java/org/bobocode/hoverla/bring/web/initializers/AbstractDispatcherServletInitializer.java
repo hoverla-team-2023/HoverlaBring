@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
  * by extending this class. Please note that your implementation should have a public default constructor.
  */
 @Slf4j
-public abstract class DispatcherServletInitializer implements ServletInitializer {
+public abstract class AbstractDispatcherServletInitializer implements ServletInitializer {
 
   /**
    * Create a new instance of the {@link DispatcherServlet} class and register it in the {@link ServletContext context}.
@@ -24,9 +24,16 @@ public abstract class DispatcherServletInitializer implements ServletInitializer
     var registration = servletContext.addServlet("dispatcher", servlet);
     registration.setLoadOnStartup(1);
     registration.setAsyncSupported(true);
-    registration.addMapping("/");
+    registration.addMapping(getServletMapping());
 
     log.info("DispatcherServlet initialized");
   }
+
+  /**
+   * Provide the mapping URL for the dispatcher servlet.
+   *
+   * @return mapping URL
+   */
+  protected abstract String getServletMapping();
 
 }
