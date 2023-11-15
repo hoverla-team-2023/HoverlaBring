@@ -11,6 +11,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Basic {@link HttpServlet} implementation
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class DispatcherServlet extends HttpServlet {
