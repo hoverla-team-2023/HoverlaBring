@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class BeanDefinition {
 
-  private String beanName;
+  private String beanDefinitionName;
   private Class<?> targetClass;
 
 }
