@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * This class is registry for {@link BeanDefinition}
  */
-@Slf4j
 public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
 
   private Map<String, BeanDefinition> beanDefinitions = new HashMap<>();
@@ -32,7 +31,7 @@ public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
   @Override
   public BeanDefinition getBeanDefinition(String beanName) {
     if (beanName == null) {
-      throw new IllegalArgumentException("Bean name should not be nell");
+      throw new IllegalArgumentException("Bean name should not be null");
     }
     return beanDefinitions.get(beanName);
   }
