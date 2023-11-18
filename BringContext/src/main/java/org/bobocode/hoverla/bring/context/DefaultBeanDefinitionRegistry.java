@@ -3,7 +3,6 @@ package org.bobocode.hoverla.bring.context;
 import org.bobocode.hoverla.bring.bean.BeanDefinition;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {

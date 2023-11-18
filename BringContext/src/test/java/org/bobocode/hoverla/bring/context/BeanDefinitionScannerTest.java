@@ -6,22 +6,21 @@ import org.bobocode.hoverla.bring.bean.BeanDefinition;
 import org.bobocode.hoverla.bring.bean.BeanScope;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import java.util.List;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BeanDefinitionScannerTest {
-    @Mock
-    private BeanDefinitionRegistry mockRegistry;
 
     private BeanDefinitionScanner scanner;
 
     @BeforeEach
     public void setUp() {
-        scanner = new BeanDefinitionScannerImpl();
-        scanner.registerBeanDefinitions(mockRegistry);
+        scanner = new BeanDefinitionScannerImpl(new DefaultBeanDefinitionRegistry(), Set.of(Component.class));
     }
 
     @Test

@@ -1,35 +1,48 @@
 package org.bobocode.hoverla.bring.context;
 
+import lombok.extern.log4j.Log4j2;
 import org.bobocode.hoverla.bring.annotations.Scope;
 import org.bobocode.hoverla.bring.bean.BeanDefinition;
-
-import org.bobocode.hoverla.bring.annotations.Component;
 import org.bobocode.hoverla.bring.bean.BeanScope;
+import org.bobocode.hoverla.bring.utils.BeanUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.util.*;
-import java.util.logging.Logger;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-import static org.bobocode.hoverla.bring.utils.PathUtils.*;
+import static org.bobocode.hoverla.bring.utils.PathUtils.getClassName;
+import static org.bobocode.hoverla.bring.utils.PathUtils.getPackageName;
+import static org.bobocode.hoverla.bring.utils.PathUtils.isClass;
+import static org.bobocode.hoverla.bring.utils.PathUtils.toFileSystemPath;
 
+@Log4j2
 public class BeanDefinitionScannerImpl implements BeanDefinitionScanner {
 
-    private static final Logger logger = Logger.getLogger(BeanDefinitionScannerImpl.class.getName());
-    private final static BeanNameGenerator GENERATOR = new DefaultBeanNameGenerator();
-    private BeanDefinitionRegistry registry;
+    private final BeanDefinitionRegistry registry;
+
+    private final Set<Class<? extends Annotation>> annotations;
 
     /**
-     * This method sets the registry instance to the provided {@link BeanDefinitionRegistry}.
-     * It is used for integrating the current bean processing logic with the specified registry.
+     * Constructs a BeanDefinitionScanner with specified registry and annotations.
      *
-     * @param registry The {@link BeanDefinitionRegistry} where the bean definitions are to be registered.
+     * @param registry    The registry for bean definitions.
+     * @param annotations Set of annotations to identify beans for scanning and registration.
      */
-    @Override
-    public void registerBeanDefinitions(BeanDefinitionRegistry registry) {
+    public BeanDefinitionScannerImpl(BeanDefinitionRegistry registry,
+                                     Set<Class<? extends Annotation>> annotations) {
         this.registry = registry;
+        this.annotations = annotations;
     }
+
 
     /**
      * Loads bean definitions from a specified base package. This method scans the given package
@@ -45,40 +58,35 @@ public class BeanDefinitionScannerImpl implements BeanDefinitionScanner {
         Set<Class<?>> beanClasses = this.findCandidatesComponents(basePackage);
 
         for (Class<?> beanClass : beanClasses) {
-            var beanName = GENERATOR.generateBeanName(beanClass);
-            logger.info("Registering bean: " + beanName);
+            var beanName = BeanUtils.generateBeanName(beanClass);
+            log.debug("Registering bean: " + beanName);
             var beanDefinition = getBeanDefinition(beanClass, beanName);
             this.registry.registerBeanDefinition(beanName, beanDefinition);
+            log.debug("Bean with name " + beanName + "registered successfully");
             beanDefinitions.add(beanDefinition);
         }
 
         return beanDefinitions;
     }
 
-    private Set<Class<?>> findCandidatesComponents(String path) {
+    private Set<Class<?>> findCandidatesComponents(String basePackage) {
         Set<Class<?>> classes = new HashSet<>();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
-        try {
-            var resources = classLoader.getResources(toFileSystemPath(path));
-            while (resources.hasMoreElements()) {
-                var resource = resources.nextElement();
-                var directory = new File(resource.getFile());
-                classes.addAll(findClasses(directory, toPackageNamePath(path), Component.class));
-            }
-        } catch (IOException e) {
-            logger.severe("Failed to scan classes with path: " + e);
+        var resources = getResources(toFileSystemPath(basePackage));
+        while (resources.hasMoreElements()) {
+            var resource = resources.nextElement();
+            var directory = new File(resource.getFile());
+            var result = findClasses(directory, basePackage);
+            classes.addAll(result);
         }
-        logger.info("Scanning for components completed");
+        log.info("Scanning for components completed");
         return classes;
     }
 
-    private Set<Class<?>> findClasses(File directory, String parentPackageName,
-                                      Class<? extends Annotation> annotation) {
+    private Set<Class<?>> findClasses(File directory, String parentPackageName) {
 
         Set<Class<?>> classes = new HashSet<>();
         if (directory == null || !directory.exists()) {
-            logger.warning("Directory not found: " + directory);
+            log.debug("Directory not found: " + directory);
             return classes;
         }
 
@@ -86,14 +94,14 @@ public class BeanDefinitionScannerImpl implements BeanDefinitionScanner {
         for (File file : files) {
             if (file.isDirectory()) {
                 String packageName = getPackageName(parentPackageName, file.getName());
-                logger.fine("Scanning directory: " + packageName);
-                classes.addAll(findClasses(file, packageName, annotation));
+                log.debug("Scanning directory: " + packageName);
+                classes.addAll(findClasses(file, packageName));
             } else if (isClass(file.getName())) {
                 String className = getClassName(parentPackageName, file.getName());
-                logger.fine("Found class: " + className);
+                log.debug("Found class: " + className);
                 Class<?> clazz = getClassByName(className);
-                if (clazz != null && clazz.isAnnotationPresent(annotation)) {
-                    logger.fine("Class annotated with " + annotation.getName() + ": " + className);
+                if (clazz != null && isAnnotationPresent(clazz)) {
+                    log.debug("Class annotated with " + Arrays.toString(clazz.getAnnotations()) + ": " + className);
                     classes.add(clazz);
                 }
             }
@@ -101,13 +109,27 @@ public class BeanDefinitionScannerImpl implements BeanDefinitionScanner {
         return classes;
     }
 
+    private static Enumeration<URL> getResources(String filePath) {
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            return classLoader.getResources(filePath);
+        } catch (IOException e) {
+            log.error("Failed to scan classes with path: " + e);
+        }
+        return Collections.emptyEnumeration();
+    }
+
     private Class<?> getClassByName(String className) {
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
-            logger.severe("Failed to load class by class name: " + e);
+            log.error("Failed to load class by class name: " + e);
         }
         return null;
+    }
+
+    public boolean isAnnotationPresent(Class<?> clazz) {
+        return annotations.stream().anyMatch(clazz::isAnnotationPresent);
     }
 
     private static BeanDefinition getBeanDefinition(Class<?> beanClass, String beanName) {
