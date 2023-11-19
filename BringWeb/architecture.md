@@ -1,4 +1,4 @@
-## BRING HTTP Server Framework Class Diagram
+## BRING HTTP Server Class Diagram (Dispatcher Servlet)
 
 ```mermaid
 classDiagram
