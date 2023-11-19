@@ -1,8 +1,8 @@
 package org.bobocode.hoverla.bring.context;
 
-import org.bobocode.hoverla.bring.bean.BeanDefinition;
-
 import java.util.List;
+
+import org.bobocode.hoverla.bring.bean.BeanDefinition;
 
 public interface BeanDefinitionScanner {
 
