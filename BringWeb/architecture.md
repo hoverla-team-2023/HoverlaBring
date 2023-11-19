@@ -3,6 +3,7 @@ classDiagram
     class HandlerMethodArgumentResolver {
         + supportsParameter(parameter: Parameter): boolean
         + resolveArgument(parameter: Parameter, request: HttpServletRequest, response: HttpServletResponse): Object
+        - httpMessageConverters: List<HttpMessageConverter>
     }
     <<interface>> HandlerMethodArgumentResolver
 
@@ -18,9 +19,10 @@ classDiagram
     class ReturnValueProcessor {
         + supports(type: Class<?>): boolean
         + processReturnValue(returnValue: Object, method: HandlerMethod, request: HttpServletRequest, response: HttpServletResponse): boolean
+        - httpMessageConverters: List<HttpMessageConverter>
     }
-
     <<interface>> ReturnValueProcessor
+
     class HandlerMethod {
         - beanType: Class<?>
         - method: Method
@@ -28,6 +30,10 @@ classDiagram
         - parameters: Parameter[]
         - bean: Object
         + handleRequest(resolvedArguments: Object[]): Object
+    }
+
+    class HandlerMapping {
+        + getHandlerMethod(request: HttpServletRequest): HandlerMethod
     }
 
     class DispatcherServlet {
@@ -43,11 +49,12 @@ classDiagram
         - processReturnValue(returnValue: Object, method: HandlerMethod, request: HttpServletRequest, response: HttpServletResponse): void
     }
 
-    DispatcherServlet --> HandlerMethod
+    DispatcherServlet --> HandlerMapping
+    HandlerMapping --> HandlerMethod
     DispatcherServlet --> HandlerMethodArgumentResolver
-    DispatcherServlet --> HttpMessageConverter
     DispatcherServlet --> ReturnValueProcessor
-
+    HandlerMethodArgumentResolver --> HttpMessageConverter
+    ReturnValueProcessor --> HttpMessageConverter
 
 ```
 
