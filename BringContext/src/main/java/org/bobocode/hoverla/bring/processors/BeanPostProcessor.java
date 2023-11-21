@@ -1,14 +1,22 @@
 package org.bobocode.hoverla.bring.processors;
 
+/**
+ * The BeanPostProcessor interface provides a hook for customizing bean instances after
+ * their creation, allowing for tasks such as dependency injection or other custom
+ * processing.
+ *
+ * <p>Implementations of this interface can be added to the bean factory using the
+ * {@code postProcessBean} method will be
+ * called for each bean after its instance creation.
+ */
 public interface BeanPostProcessor {
 
   /**
-   * This interface can ve used to different goals to processing bean after instance creation, like dependency injection(some objects or variable from files)
-   * After creation of custom implementation this class you need to add it to list of BeanPostProcessors into BeanFactory using addBeanPostProcessor method.
-   * this method will be called for every bean after it's instance creation in order that is present in BeanFactoryImpl.beanFactoryPostProcessors
-   * @param bean recently created bean instance registered into context
-   * @param beanName name of bean
-   * @return updated object that will be registered into ApplicationContext with given "beanName"
+   * Post-process the given bean instance before it is registered into the application context.
+   *
+   * @param bean the recently created bean instance
+   * @param beanName the name of the bean
+   * @return the updated object that will be registered into the application context with the given "beanName"
    */
   Object postProcessBean(Object bean, String beanName);
 

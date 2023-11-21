@@ -1,16 +1,18 @@
 package org.bobocode.hoverla.bring.context;
 
-import lombok.extern.slf4j.Slf4j;
+import java.lang.annotation.Annotation;
+import java.util.Set;
+
 import org.bobocode.hoverla.bring.annotations.Component;
 import org.bobocode.hoverla.bring.factory.BeanFactory;
 import org.bobocode.hoverla.bring.factory.BeanFactoryImpl;
 import org.bobocode.hoverla.bring.processors.AutowireBeanPostProcessor;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * Main class of Bring Context application, responsible for manage of all main process in this app
+ * Main class of Bring Context application, Implementation of {@link ApplicationContext}
+ * responsible for manage of all main process in this app
  */
 @Slf4j
 public class HoverlaApplicationContext implements ApplicationContext {

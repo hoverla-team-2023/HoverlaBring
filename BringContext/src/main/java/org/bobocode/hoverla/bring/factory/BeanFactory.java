@@ -1,11 +1,11 @@
 package org.bobocode.hoverla.bring.factory;
 
+import java.util.Collection;
+
 import org.bobocode.hoverla.bring.bean.BeanDefinition;
 import org.bobocode.hoverla.bring.context.BeanDefinitionRegistry;
 import org.bobocode.hoverla.bring.processors.BeanFactoryPostProcessor;
 import org.bobocode.hoverla.bring.processors.BeanPostProcessor;
-
-import java.util.Collection;
 
 /**
  * The {@code BeanFactory} interface represents a central registry for managing beans in a bean-oriented application context.
@@ -88,5 +88,10 @@ public interface BeanFactory {
 
   Collection<BeanDefinition> getRegisteredBeanDefinitions();
 
+  /**
+   * Retrieves a collection of all instantiated beans within the bean factory.
+   *
+   * @return a collection of all instantiated beans in the bean factory
+   */
   Collection<Object> getAllBeans();
 }
