@@ -7,10 +7,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * The StringReturnValueProcessor class is an implementation of the ReturnValueProcessor interface.
  * It is responsible for handling method return values that are of type String or its subclasses in a servlet context.
  */
+@Slf4j
 public class StringReturnValueProcessor implements ReturnValueProcessor {
 
   /**

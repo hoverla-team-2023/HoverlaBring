@@ -5,10 +5,13 @@ import java.lang.reflect.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * The ServletArgumentResolver class is a custom implementation of the HandlerMethodArgumentResolver interface in Spring MVC.
  * It resolves the HttpServletRequest and HttpServletResponse objects as method arguments in a controller method.
  */
+@Slf4j
 public class ServletArgumentResolver implements HandlerMethodArgumentResolver {
 
   /**
