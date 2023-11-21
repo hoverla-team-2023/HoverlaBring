@@ -1,15 +1,14 @@
 package org.bobocode.hoverla.bring.web.initializers;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.util.Set;
-
 import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.HandlesTypes;
-
 import lombok.extern.slf4j.Slf4j;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.Set;
 
 /**
  * Basic {@link ServletContainerInitializer} implementation. It is invoked by a servlet container when the web application is started.
