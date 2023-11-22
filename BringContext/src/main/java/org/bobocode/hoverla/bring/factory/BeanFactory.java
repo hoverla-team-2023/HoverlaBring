@@ -8,11 +8,11 @@ public interface BeanFactory {
 
   Object getBean(String beanName);
 
-  Object tryToInitializeSingletonBean(String beanName);
-
   void addBeanFactoryPostProcessor(BeanFactoryPostProcessor postProcessor);
 
   void addBeanPostProcessor(BeanPostProcessor postProcessor);
+
+  void addBeanDefinition(String beanDefinitionName, BeanDefinition beanDefinition);
 
   BeanDefinition getBeanDefinitionByName(String beanName);
 
