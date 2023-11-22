@@ -8,16 +8,19 @@ import org.bobocode.hoverla.bring.annotations.Component;
 import org.bobocode.hoverla.bring.factory.BeanFactory;
 import org.bobocode.hoverla.bring.factory.BeanFactoryImpl;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Main class of Bring Context application, responsible for manage of all main process in this app
  */
+@Slf4j
 public class HoverlaApplicationContext implements ApplicationContext {
 
   private BeanDefinitionScanner beanDefinitionScanner;
   private BeanFactory beanFactory;
   private BeanDefinitionRegistry beanDefinitionRegistry;
 
-  Set<Class<? extends Annotation>> allowedBeanDefinedAnnotations = new HashSet<>();
+  Set<Class<? extends Annotation>> allowedBeanDefinedAnnotations = Set.of(Component.class);
 
   /**
    * Constructor by default that will invoke all the magic under the hood.
@@ -27,16 +30,19 @@ public class HoverlaApplicationContext implements ApplicationContext {
    *             Please note if you will add as path /com/asd/qwe but you have next class SomeService.class in folder /com/asd/qwe/service it will be also find by scanner
    */
   public HoverlaApplicationContext(String path) {
+    log.debug("Context initialization started, path to scan: {}" , path);
     init();
+    log.debug("Context initialization finished successfully, starting package scanning");
     beanDefinitionScanner.loadBeanDefinitions(path);
+    log.debug("Scanning components finished successfully");
     doProcessBeans();
+    log.debug("Bean processing finished successfully, app is ready to use");
   }
 
   /**
    * This method is responsible for initialization of required HoverlaApplicationContext params
    */
   private void init() {
-    this.allowedBeanDefinedAnnotations.add(Component.class);
     this.beanDefinitionRegistry = new DefaultBeanDefinitionRegistry();
     this.beanDefinitionScanner = new BeanDefinitionScannerImpl(beanDefinitionRegistry, allowedBeanDefinedAnnotations);
     this.beanFactory = initBeanFactory();
@@ -49,12 +55,15 @@ public class HoverlaApplicationContext implements ApplicationContext {
     BeanFactoryImpl beanFactoryImpl = new BeanFactoryImpl();
     //    beanFactoryImpl.addBeanPostProcessor(); //todo add default bpp(autowiringBpp) here the same about beanFactoryPostProcessors
     beanFactoryImpl.setBeanDefinitionRegistry(beanDefinitionRegistry);
+    log.debug("Bean factory successfully initialized");
     return beanFactoryImpl;
   }
 
   private void doProcessBeans() {
     for (String beanDefinitionName : beanDefinitionRegistry.getAllBeanDefinitionNames()) {
+      log.debug("Processing bean with name {} started", beanDefinitionName);
       beanFactory.tryToInitializeSingletonBean(beanDefinitionName);
+      log.debug("Processing bean with name {} finished", beanDefinitionName);
     }
   }
 

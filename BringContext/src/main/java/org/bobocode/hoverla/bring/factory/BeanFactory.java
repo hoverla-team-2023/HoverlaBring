@@ -14,6 +14,6 @@ public interface BeanFactory {
 
   void addBeanPostProcessor(BeanPostProcessor postProcessor);
 
-  BeanDefinition getBeanDefinitionByName(String beanName);
+  BeanDefinition getBeanDefinitionByBeanName(String beanName);
 
 }

@@ -82,7 +82,7 @@ public class BeanDefinitionScannerImpl implements BeanDefinitionScanner {
         var result = findClasses(directory, basePackage);
         classes.addAll(result);
       } catch (URISyntaxException e) {
-        throw new RuntimeException(e);
+        log.error("Failed to get directory by path " + basePackage, e);
       }
     }
     log.info("Scanning for components completed");

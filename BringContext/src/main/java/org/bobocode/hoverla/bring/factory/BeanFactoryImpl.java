@@ -14,9 +14,12 @@ import org.bobocode.hoverla.bring.exception.BeanCreationException;
 import org.bobocode.hoverla.bring.processors.BeanFactoryPostProcessor;
 import org.bobocode.hoverla.bring.processors.BeanPostProcessor;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * BeanFactoryImpl class is responsible for creation of beans from bean definitions and dependency injection
  */
+@Slf4j
 public class BeanFactoryImpl implements BeanFactory {
 
   private Set<BeanFactoryPostProcessor> beanFactoryPostProcessors = new HashSet<>();
@@ -59,8 +62,10 @@ public class BeanFactoryImpl implements BeanFactory {
       throw new BeanCreationException("Error happened during crete of bean with name: " + beanName, e);
     }
     beans.put(beanName, createdBean);
+    log.debug("Started post processing for bean with name {}", beanName);
     beanPostProcessors.forEach(bpp -> bpp.postProcessBeforeInitialization(createdBean, beanName));
     beanPostProcessors.forEach(bpp -> bpp.postProcessAfterInitialization(createdBean, beanName));
+    log.debug("Post processing for bean with name {} finished", beanName);
     return createdBean;
   }
 
@@ -71,36 +76,52 @@ public class BeanFactoryImpl implements BeanFactory {
     }
     Class<?> targetClass = beanDefinition.getTargetClass();
     if (targetClass == null) {
-      throw new BeanCreationException("BeamDefinition for bean name" + beanName + "should contain target class");
+      throw new BeanCreationException("BeanDefinition for bean name" + beanName + "should contain target class");
     }
-    Object bean;
     for (Constructor<?> constructor : targetClass.getConstructors()) {
       if (constructor.getParameterCount() == 0) {
-        return constructor.newInstance();
+        Object beanInstance = constructor.newInstance();
+        log.info("Bean with name {} successfully created", beanName);
+        return beanInstance;
       }
     }
     throw new BeanCreationException("Bean with name " + beanName + "does not have constructor without arguments");
   }
 
+  /**
+   * This method will BeanFactoryPostProcessor from @param postProcessor to existed bean factory post processors
+   * Please note we can't have 2 the same processors
+   */
   @Override
   public void addBeanFactoryPostProcessor(BeanFactoryPostProcessor postProcessor) {
     if (postProcessor == null) {
-      throw new IllegalArgumentException("BeamFactoryPostProcessor should not be null");
+      throw new IllegalArgumentException("BeanFactoryPostProcessor should not be null");
     }
     this.beanFactoryPostProcessors.add(postProcessor);
   }
 
+  /**
+   * This method will BeanPostProcessor from @param postProcessor to existed bean factory post processors
+   * Please note we can't have 2 the same processors
+   */
   @Override
   public void addBeanPostProcessor(BeanPostProcessor postProcessor) {
     if (postProcessor == null) {
-      throw new IllegalArgumentException("BeamPostProcessor should not be null");
+      throw new IllegalArgumentException("BeanPostProcessor should not be null");
     }
     beanPostProcessors.add(postProcessor);
   }
 
+  /**
+   * this method will return existed BeanDefinition with selected beanName
+   */
   @Override
-  public BeanDefinition getBeanDefinitionByName(String beanName) {
-    return beanDefinitionRegistry.getBeanDefinition(beanName);
+  public BeanDefinition getBeanDefinitionByBeanName(String beanName) {
+    BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
+    if (beanDefinition == null) {
+      log.info("Can't find BeanDefinition with name {}", beanName);
+    }
+    return beanDefinition;
   }
 
 }
