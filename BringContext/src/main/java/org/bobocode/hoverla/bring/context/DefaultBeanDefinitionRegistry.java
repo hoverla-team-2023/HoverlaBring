@@ -3,8 +3,6 @@ package org.bobocode.hoverla.bring.context;
 import java.util.HashMap;
 import java.util.Map;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * This class is registry for {@link BeanDefinition}
  */
@@ -22,7 +20,6 @@ public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
    */
   @Override
   public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
-    beanDefinitions.put(beanName, beanDefinition);
     if (beanName == null) {
       throw new IllegalArgumentException("Bean name can't be null");
     }

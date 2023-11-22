@@ -32,7 +32,7 @@ class DefaultBeanDefinitionRegistryTest {
   void registerBeanDefinition_registerBeanThatDoesNotExist() {
     String beanDefinitionName = "my super puper bean";
     BeanDefinition beanDefinition = new BeanDefinition();
-    beanDefinition.setBeanDefinitionName(beanDefinitionName);
+    beanDefinition.setBeanName(beanDefinitionName);
 
     registry.registerBeanDefinition(beanDefinitionName, beanDefinition);
 
@@ -46,8 +46,8 @@ class DefaultBeanDefinitionRegistryTest {
     String beanDefinitionName = "my super puper bean";
     BeanDefinition beanDefinition = new BeanDefinition();
     BeanDefinition beanDefinitionWithTheSameName = new BeanDefinition();
-    beanDefinition.setBeanDefinitionName(beanDefinitionName);
-    beanDefinitionWithTheSameName.setBeanDefinitionName(beanDefinitionName);
+    beanDefinition.setBeanName(beanDefinitionName);
+    beanDefinitionWithTheSameName.setBeanName(beanDefinitionName);
 
     registry.registerBeanDefinition(beanDefinitionName, beanDefinition);
     assertThrows(IllegalArgumentException.class, () -> registry.registerBeanDefinition(beanDefinitionName, beanDefinition));
