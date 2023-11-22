@@ -1,7 +1,6 @@
 package org.bobocode.hoverla.bring.context;
 
 import java.lang.annotation.Annotation;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.bobocode.hoverla.bring.annotations.Component;
@@ -30,7 +29,7 @@ public class HoverlaApplicationContext implements ApplicationContext {
    *             Please note if you will add as path /com/asd/qwe but you have next class SomeService.class in folder /com/asd/qwe/service it will be also find by scanner
    */
   public HoverlaApplicationContext(String path) {
-    log.debug("Context initialization started, path to scan: {}" , path);
+    log.debug("Context initialization started, path to scan: {}", path);
     init();
     log.debug("Context initialization finished successfully, starting package scanning");
     beanDefinitionScanner.loadBeanDefinitions(path);
