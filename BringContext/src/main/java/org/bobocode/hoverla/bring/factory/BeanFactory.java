@@ -1,27 +1,19 @@
 package org.bobocode.hoverla.bring.factory;
 
+import org.bobocode.hoverla.bring.bean.BeanDefinition;
 import org.bobocode.hoverla.bring.processors.BeanFactoryPostProcessor;
 import org.bobocode.hoverla.bring.processors.BeanPostProcessor;
 
-import java.util.List;
-import java.util.Map;
+public interface BeanFactory {
 
-public class BeanFactory {
+  Object getBean(String beanName);
 
-  private List<BeanFactoryPostProcessor> beanFactoryPostProcessors;
-  private List<BeanPostProcessor> beanPostProcessors;
-  private Map<String, Object> beans;
+  void addBeanFactoryPostProcessor(BeanFactoryPostProcessor postProcessor);
 
-  public Object createBean(String beanName) {
-    return null;
-  }
+  void addBeanPostProcessor(BeanPostProcessor postProcessor);
 
-  public void addBeanFactoryPostProcessor(BeanFactoryPostProcessor postProcessor) {
+  void addBeanDefinition(String beanDefinitionName, BeanDefinition beanDefinition);
 
-  }
-
-  public void addBeanPostProcessor(BeanPostProcessor postProcessor) {
-
-  }
+  BeanDefinition getBeanDefinitionByName(String beanName);
 
 }
