@@ -14,9 +14,11 @@ import static org.bobocode.hoverla.bring.web.util.TypeUtils.isTextPlainType;
 /**
  * Processor for that handles {@link String}, primitives and their wrapper types as a return value.
  */
-public class SimpleReturnValueProcessor extends AbstractReturnValueProcessor {
+public class StringAndPrimitiveReturnValueProcessor extends AbstractReturnValueProcessor {
 
-  public SimpleReturnValueProcessor(List<HttpMessageConverter> converters) {
+  private static final int DEFAULT_STATUS_CODE = 200;
+
+  public StringAndPrimitiveReturnValueProcessor(List<HttpMessageConverter> converters) {
     super(converters);
   }
 
@@ -41,7 +43,7 @@ public class SimpleReturnValueProcessor extends AbstractReturnValueProcessor {
       converter.get().write(returnValue, response, contentType);
 
       // Set response status code
-      setStatusCode(handlerMethod.getMethod(), response, 200);
+      setStatusCode(handlerMethod.getMethod(), response, DEFAULT_STATUS_CODE);
 
       return true; // Successfully processed the return value
     }

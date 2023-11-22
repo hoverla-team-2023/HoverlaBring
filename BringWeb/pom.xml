@@ -12,6 +12,10 @@
   <groupId>org.bobocode.hoverla.bring.web</groupId>
   <artifactId>BringWeb</artifactId>
 
+  <properties>
+    <jackson.version>2.15.3</jackson.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.bobocode.hoverla.bring</groupId>
@@ -25,7 +29,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.15.3</version>
+      <version>${jackson.version}</version>
     </dependency>
   </dependencies>
 
