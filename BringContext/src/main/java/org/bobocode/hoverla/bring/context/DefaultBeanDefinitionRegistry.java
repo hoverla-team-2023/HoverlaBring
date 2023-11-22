@@ -3,6 +3,9 @@ package org.bobocode.hoverla.bring.context;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is registry for {@link BeanDefinition}
+ */
 import org.bobocode.hoverla.bring.bean.BeanDefinition;
 
 public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
@@ -17,6 +20,15 @@ public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
    */
   @Override
   public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
+    if (beanName == null) {
+      throw new IllegalArgumentException("Bean name can't be null");
+    }
+    if (beanDefinition == null) {
+      throw new IllegalArgumentException("BeanDefinition can't be null");
+    }
+    if (beanDefinitions.containsKey(beanName)) {
+      throw new IllegalArgumentException("Failed to set, Bean with name " + beanName + "already exists");
+    }
     beanDefinitions.put(beanName, beanDefinition);
   }
 
@@ -29,6 +41,9 @@ public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
    */
   @Override
   public BeanDefinition getBeanDefinition(String beanName) {
+    if (beanName == null) {
+      throw new IllegalArgumentException("Bean name should not be null");
+    }
     return beanDefinitions.get(beanName);
   }
 
