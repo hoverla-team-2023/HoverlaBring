@@ -2,6 +2,7 @@ package org.bobocode.hoverla.bring.context;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.bobocode.hoverla.bring.bean.BeanDefinition;
 
@@ -30,6 +31,14 @@ public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
   @Override
   public BeanDefinition getBeanDefinition(String beanName) {
     return beanDefinitions.get(beanName);
+  }
+
+  /**
+   * @return all registered BeanDefinition names
+   */
+  @Override
+  public Set<String> getAllBeanDefinitionNames() {
+    return beanDefinitions.keySet();
   }
 
 }
