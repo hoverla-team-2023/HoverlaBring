@@ -13,7 +13,6 @@
         <module>BringContext</module>
         <module>BringWeb</module>
         <module>BringWebDemo</module>
-        <module>BringServletMappingDemo</module>
     </modules>
 
     <properties>

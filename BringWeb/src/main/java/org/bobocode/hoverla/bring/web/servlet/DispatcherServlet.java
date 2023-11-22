@@ -75,7 +75,7 @@ public class DispatcherServlet extends HttpServlet {
       Object returnValue = handlerMethod.handleRequest(resolvedArguments);
 
       // Process the return value
-      processReturnValue(returnValue, handlerMethod, request, response);
+      processReturnValue(returnValue, handlerMethod, response);
     } else {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
@@ -123,15 +123,14 @@ public class DispatcherServlet extends HttpServlet {
    *
    * @param returnValue The return value from the handler method.
    * @param method      The handler method.
-   * @param request     The HTTP servlet request.
    * @param response    The HTTP servlet response.
    *
    * @throws IOException If an I/O exception occurs.
    */
-  private void processReturnValue(Object returnValue, HandlerMethod method, HttpServletRequest request, HttpServletResponse response) throws IOException {
+  private void processReturnValue(Object returnValue, HandlerMethod method, HttpServletResponse response) throws IOException {
     for (ReturnValueProcessor processor : returnValueProcessors) {
       if (processor.supports(returnValue.getClass())) {
-        if (processor.processReturnValue(returnValue, method, request, response)) {
+        if (processor.processReturnValue(returnValue, method, response)) {
           return; // Successfully processed the return value
         }
       }
