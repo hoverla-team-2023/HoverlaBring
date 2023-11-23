@@ -2,6 +2,7 @@ package org.bobocode.hoverla.bring.context;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class is registry for {@link BeanDefinition}
@@ -45,6 +46,14 @@ public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
       throw new IllegalArgumentException("Bean name should not be null");
     }
     return beanDefinitions.get(beanName);
+  }
+
+  /**
+   * @return all registered BeanDefinition names
+   */
+  @Override
+  public Set<String> getAllBeanDefinitionNames() {
+    return beanDefinitions.keySet();
   }
 
 }

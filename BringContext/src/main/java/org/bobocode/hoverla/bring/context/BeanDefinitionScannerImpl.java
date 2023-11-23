@@ -3,6 +3,7 @@ package org.bobocode.hoverla.bring.context;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,9 +77,13 @@ public class BeanDefinitionScannerImpl implements BeanDefinitionScanner {
     var resources = getResources(toFileSystemPath(basePackage));
     while (resources.hasMoreElements()) {
       var resource = resources.nextElement();
-      var directory = new File(resource.getFile());
-      var result = findClasses(directory, basePackage);
-      classes.addAll(result);
+      try {
+        var directory = new File(resource.toURI());
+        var result = findClasses(directory, basePackage);
+        classes.addAll(result);
+      } catch (URISyntaxException e) {
+        log.error("Failed to get directory by path " + basePackage, e);
+      }
     }
     log.info("Scanning for components completed");
     return classes;
