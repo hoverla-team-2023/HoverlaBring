@@ -6,6 +6,7 @@ import java.util.Set;
 import org.bobocode.hoverla.bring.annotations.Component;
 import org.bobocode.hoverla.bring.factory.BeanFactory;
 import org.bobocode.hoverla.bring.factory.BeanFactoryImpl;
+import org.bobocode.hoverla.bring.processors.AutowireBeanPostProcessor;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,11 +49,11 @@ public class HoverlaApplicationContext implements ApplicationContext {
   }
 
   /**
-   * This method is responsible for initialization of BeanFactory
+   * This method is responsible for initialization of BeanFactory and add defaults BeanPostProcessors
    */
   private BeanFactory initBeanFactory() {
     BeanFactoryImpl beanFactoryImpl = new BeanFactoryImpl();
-    //    beanFactoryImpl.addBeanPostProcessor(); //todo add default bpp(autowiringBpp) here the same about beanFactoryPostProcessors
+    beanFactoryImpl.addBeanPostProcessor(new AutowireBeanPostProcessor(beanFactoryImpl));
     beanFactoryImpl.setBeanDefinitionRegistry(beanDefinitionRegistry);
     log.debug("Bean factory successfully initialized");
     return beanFactoryImpl;
