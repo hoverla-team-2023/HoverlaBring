@@ -15,11 +15,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequestMapping {
 
-  /**
-   * Alias for {@link #path()}
-   */
-  String value();
-
   String path();
 
   /**
