@@ -30,6 +30,16 @@ public class AutowireBeanPostProcessor implements BeanPostProcessor {
     return bean;
   }
 
+  /**
+   * This method will inject all required dependency to bean and return it
+   * Please note, this method will inject fields by interface too:
+   * Example we have class UserServiceImpl that implements UserService, you can inject it by two ways @Autowired private UserService userService
+   * and @Autowired private UserServiceImpl userService;
+   * But at the moment if u have 2 classes that is marked as @Component and you try to autowire by UserService excption will be throw
+   * @param bean object to inject
+   * @param beanName keyword used to find bean in BeanFactory
+   * @return updated bean
+   */
   @Override
   public Object postProcessAfterInitialization(Object bean, String beanName) {
     BeanDefinition beanDefinitionByBeanName = beanFactory.getBeanDefinitionByBeanName(beanName);

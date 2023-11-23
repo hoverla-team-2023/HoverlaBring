@@ -69,11 +69,11 @@ public class BeanFactoryImpl implements BeanFactory {
     } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
       throw new BeanCreationException("Error happened during crete of bean with name: " + beanName, e);
     }
-    beans.put(beanName, createdBean);
     log.debug("Started post processing for bean with name {}", beanName);
     beanPostProcessors.forEach(bpp -> bpp.postProcessBeforeInitialization(createdBean, beanName));
     beanPostProcessors.forEach(bpp -> bpp.postProcessAfterInitialization(createdBean, beanName));
     log.debug("Post processing for bean with name {} finished", beanName);
+    beans.put(beanName, createdBean);
     return createdBean;
   }
 
