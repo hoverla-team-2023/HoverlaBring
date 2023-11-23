@@ -2,6 +2,7 @@ package org.bobocode.hoverla.bring.factory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -129,6 +130,14 @@ public class BeanFactoryImpl implements BeanFactory {
       log.warn("Can't find BeanDefinition with name {}", beanName);
     }
     return beanDefinition;
+  }
+
+  /**
+   * this method will return all registered bean definition
+   */
+  @Override
+  public Collection<BeanDefinition> getRegisteredBeanDefinitions() {
+    return beanDefinitionRegistry.getAllBeanDefinitions();
   }
 
 }

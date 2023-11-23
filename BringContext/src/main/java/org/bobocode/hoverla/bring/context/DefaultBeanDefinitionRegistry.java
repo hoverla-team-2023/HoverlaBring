@@ -1,12 +1,10 @@
 package org.bobocode.hoverla.bring.context;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * This class is registry for {@link BeanDefinition}
- */
 import org.bobocode.hoverla.bring.bean.BeanDefinition;
 
 public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
@@ -54,6 +52,14 @@ public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
   @Override
   public Set<String> getAllBeanDefinitionNames() {
     return beanDefinitions.keySet();
+  }
+
+  /**
+   * this method will return all registered BeanDefinitions
+   */
+  @Override
+  public Collection<BeanDefinition> getAllBeanDefinitions() {
+    return beanDefinitions.values();
   }
 
 }

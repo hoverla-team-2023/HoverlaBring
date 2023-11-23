@@ -1,5 +1,6 @@
 package org.bobocode.hoverla.bring.context;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.bobocode.hoverla.bring.bean.BeanDefinition;
@@ -11,5 +12,7 @@ public interface BeanDefinitionRegistry {
   BeanDefinition getBeanDefinition(String beanName);
 
   Set<String> getAllBeanDefinitionNames();
+
+  Collection<BeanDefinition> getAllBeanDefinitions();
 
 }
