@@ -43,7 +43,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class QueryParamArgumentResolver implements HandlerMethodArgumentResolver {
 
-  ObjectMapper mapper = new CsvMapper();
+  private final ObjectMapper mapper = new CsvMapper();
 
   @Override
   public boolean supportsParameter(Parameter parameter) {
