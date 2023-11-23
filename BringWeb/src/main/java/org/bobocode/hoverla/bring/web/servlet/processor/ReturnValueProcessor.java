@@ -12,7 +12,7 @@ import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
  * and set it as a {@link org.bobocode.hoverla.bring.web.servlet.DispatcherServlet servlet} response.
  *
  * @see AbstractReturnValueProcessor
- * @see StringAndPrimitiveReturnValueProcessor
+ * @see TextPlainReturnValueProcessor
  * @see ResponseEntityReturnValueProcessor
  * @see ResponseEntity
  */

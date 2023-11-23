@@ -14,11 +14,9 @@ import static org.bobocode.hoverla.bring.web.util.TypeUtils.isTextPlainType;
 /**
  * Processor for that handles {@link String}, primitives and their wrapper types as a return value.
  */
-public class StringAndPrimitiveReturnValueProcessor extends AbstractReturnValueProcessor {
+public class TextPlainReturnValueProcessor extends AbstractReturnValueProcessor {
 
-  private static final int DEFAULT_STATUS_CODE = 200;
-
-  public StringAndPrimitiveReturnValueProcessor(List<HttpMessageConverter> converters) {
+  public TextPlainReturnValueProcessor(List<HttpMessageConverter> converters) {
     super(converters);
   }
 
@@ -32,10 +30,6 @@ public class StringAndPrimitiveReturnValueProcessor extends AbstractReturnValueP
                                     HandlerMethod handlerMethod,
                                     HttpServletResponse response) throws IOException {
     var contentType = TEXT_PLAIN.getValue();
-
-    // Set the Content-Type header
-    response.setContentType(contentType);
-
     var converter = findConverter(returnValue.getClass(), contentType);
 
     if (converter.isPresent()) {
@@ -43,7 +37,7 @@ public class StringAndPrimitiveReturnValueProcessor extends AbstractReturnValueP
       converter.get().write(returnValue, response, contentType);
 
       // Set response status code
-      setStatusCode(handlerMethod.getMethod(), response, DEFAULT_STATUS_CODE);
+      setStatusCode(handlerMethod.getMethod(), response);
 
       return true; // Successfully processed the return value
     }

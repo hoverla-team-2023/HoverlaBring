@@ -10,8 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public interface HttpMessageConverter {
 
-  String CONTENT_TYPE_HEADER = "Content-Type";
-
   boolean canWrite(Class<?> type, String contentType);
 
   void write(Object value, HttpServletResponse response, String contentType) throws IOException;

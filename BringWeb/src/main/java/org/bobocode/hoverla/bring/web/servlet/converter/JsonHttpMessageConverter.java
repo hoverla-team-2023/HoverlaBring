@@ -5,6 +5,8 @@ import java.io.IOException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.bobocode.hoverla.bring.web.exceptions.ObjectSerializingException;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -40,12 +42,14 @@ public class JsonHttpMessageConverter implements HttpMessageConverter {
     var content = getContentType(contentType);
 
     log.trace("Writing JSON response with Content-Type: {}", content);
-    response.setHeader(CONTENT_TYPE_HEADER, content);
+    response.setContentType(content);
 
     try {
       response.getWriter().write(objectMapper.writeValueAsString(value));
     } catch (JsonProcessingException e) {
-      log.error("Failed to convert the return value to JSON and write the response. Verify the return value is POJO and can be serialized", e);
+      var message = "Failed to convert the return value to JSON and write the response. Verify the return value is POJO and can be serialized";
+      log.error(message, e);
+      throw new ObjectSerializingException(message, e);
     }
   }
 

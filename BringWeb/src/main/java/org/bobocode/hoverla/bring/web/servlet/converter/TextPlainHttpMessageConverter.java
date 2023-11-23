@@ -27,7 +27,7 @@ public class TextPlainHttpMessageConverter implements HttpMessageConverter {
     var content = getContentType(contentType);
 
     log.trace("Writing plain text response with content type: {}", content);
-    response.setHeader(CONTENT_TYPE_HEADER, content);
+    response.setContentType(content);
     response.getWriter().write(value.toString());
   }
 

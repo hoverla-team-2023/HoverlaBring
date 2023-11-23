@@ -21,11 +21,11 @@ public class TypeUtils {
   );
 
   public static boolean isTextPlainType(Class<?> type) {
-    return isWrapperType(type) || String.class.isAssignableFrom(type);
+    return isPrimitiveOrWrapper(type) || String.class.isAssignableFrom(type);
   }
 
-  public static boolean isWrapperType(Class<?> type) {
-    return WRAPPER_TYPES.containsKey(type);
+  public static boolean isPrimitiveOrWrapper(Class<?> type) {
+    return type.isPrimitive() || WRAPPER_TYPES.containsKey(type);
   }
 
 }

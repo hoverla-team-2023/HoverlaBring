@@ -18,6 +18,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public abstract class AbstractReturnValueProcessor implements ReturnValueProcessor {
 
+  protected static final int DEFAULT_STATUS_CODE = 200;
   private final List<HttpMessageConverter> converters;
 
   protected AbstractReturnValueProcessor(List<HttpMessageConverter> converters) {
@@ -33,10 +34,10 @@ public abstract class AbstractReturnValueProcessor implements ReturnValueProcess
     return converter;
   }
 
-  protected void setStatusCode(Method method, HttpServletResponse response, int defaultStatusCode) {
+  protected void setStatusCode(Method method, HttpServletResponse response) {
     var statusCode = Optional.ofNullable(method.getAnnotation(StatusCode.class))
       .map(StatusCode::value)
-      .orElse(defaultStatusCode);
+      .orElse(DEFAULT_STATUS_CODE);
     response.setStatus(statusCode);
   }
 

@@ -47,7 +47,7 @@ public class ResponseEntityReturnValueProcessor extends AbstractReturnValueProce
         converter.get().write(body, response, contentType);
 
         // Set response status code
-        setStatusCode(handlerMethod.getMethod(), response, responseEntity.getStatus());
+        setStatusCode(handlerMethod.getMethod(), response);
 
         return true; // Successfully processed the return value
       }

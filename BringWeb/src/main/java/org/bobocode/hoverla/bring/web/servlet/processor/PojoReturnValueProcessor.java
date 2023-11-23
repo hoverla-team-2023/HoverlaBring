@@ -36,7 +36,7 @@ public class PojoReturnValueProcessor extends AbstractReturnValueProcessor {
       converter.get().write(returnValue, response, APPLICATION_JSON.getValue());
 
       // Set response status code
-      setStatusCode(handlerMethod.getMethod(), response, 200);
+      setStatusCode(handlerMethod.getMethod(), response);
 
       return true;
     }
