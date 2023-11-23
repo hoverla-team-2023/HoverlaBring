@@ -1,7 +1,6 @@
 package org.bobocode.hoverla.bring.web.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,9 +12,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
+import org.bobocode.hoverla.bring.web.servlet.mapping.AnnotationBasedHandlerMapping;
 import org.bobocode.hoverla.bring.web.servlet.mapping.HandlerMapping;
 import org.bobocode.hoverla.bring.web.servlet.processor.ReturnValueProcessor;
+import org.bobocode.hoverla.bring.web.servlet.processor.StringReturnValueProcessor;
 import org.bobocode.hoverla.bring.web.servlet.resolver.HandlerMethodArgumentResolver;
+import org.bobocode.hoverla.bring.web.servlet.resolver.ServletArgumentResolver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,9 +46,9 @@ public class DispatcherServlet extends HttpServlet {
    */
   @Override
   public void init(ServletConfig config) throws ServletException {
-    this.returnValueProcessors = new ArrayList<>();
-    this.argumentResolvers = new ArrayList<>();
-    this.handlerMappings = new ArrayList<>();
+    this.returnValueProcessors = List.of(new StringReturnValueProcessor());
+    this.argumentResolvers = List.of(new ServletArgumentResolver());
+    this.handlerMappings = List.of(new AnnotationBasedHandlerMapping()); // Need to provide Controllers what will be initialized and scanned
   }
 
   @Override
