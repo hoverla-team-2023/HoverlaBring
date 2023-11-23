@@ -1,5 +1,3 @@
-## [Diagrams](https://mermaid-js.github.io/mermaid/#/flowchart)
-
 ## BRING Basic Context Class Diagram (IoC Container)
 
 ```mermaid
@@ -8,13 +6,11 @@ classDiagram
         -BeanDefinitionReader beanDefinitionReader
         -BeanFactory beanFactory
         -BeanDefinitionRegistry beanDefinitionRegistry
-        +createApplicationContext()
         +getBeanFactory()
     }
 
     class BeanDefinitionReader {
         +loadBeanDefinitions()
-        +registerBeanDefinitions(BeanDefinitionRegistry registry)
     }
 
     class BeanDefinitionRegistry {
@@ -27,7 +23,8 @@ classDiagram
         -List~BeanFactoryPostProcessor~ beanFactoryPostProcessors
         -List~BeanPostProcessor~ beanPostProcessors
         -Map~String, Object~ beans
-        +createBean(String beanName)
+        +getBean(String beanName)
+        +Object tryToInitializeSingletonBean(String beanName)
         +addBeanFactoryPostProcessor(BeanFactoryPostProcessor postProcessor)
         +addBeanPostProcessor(BeanPostProcessor postProcessor)
     }
@@ -41,9 +38,7 @@ classDiagram
         +postProcessAfterInitialization(Object bean, String beanName)
     }
 
-    class Bean {
-        +initialize()
-        +destroy()
+    class Object{
     }
 
     ApplicationContext -- BeanDefinitionReader : uses
@@ -51,7 +46,7 @@ classDiagram
     ApplicationContext -- BeanDefinitionRegistry : uses
     BeanFactory -- BeanFactoryPostProcessor : uses
     BeanFactory -- BeanPostProcessor : uses
-    BeanFactory -- Bean : creates
+    BeanFactory -- Object: creates
     BeanDefinitionReader -- BeanDefinitionRegistry : interacts with
     
 ```
@@ -150,9 +145,7 @@ classDiagram
 
     }
 
-    class Bean {
-        +initialize()
-        +destroy()
+    class Object {
     }
 
     BeanFactory <|-- AbstractBeanFactory
@@ -171,11 +164,11 @@ classDiagram
     BeanDefinitionRegistryPostProcessor <|-- ConfigurationBeanPostProcessor
     BeanFactory -- BeanFactoryPostProcessor : uses
     BeanFactory -- BeanPostProcessor : uses
-    BeanFactory -- Bean : creates
+    BeanFactory -- Object: creates
     
 ```
 
-## BRING Initialisation Context Sequence Diagram
+## BRING Initialization Context Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -186,7 +179,7 @@ sequenceDiagram
     participant BeanFactory as BeanFactory
     participant BeanFactoryPostProcessor as BeanFactoryPostProcessor
     participant BeanPostProcessor as BeanPostProcessor
-    participant Bean as Bean
+    participant Object as Bean
 
     Main->>ApplicationContext: Create ApplicationContext
     activate ApplicationContext
@@ -212,7 +205,7 @@ sequenceDiagram
     loop For each Bean Definition in BeanDefinitionRegistry
         BeanFactory->>Bean: Create Bean from BeanDefinition
         activate Bean
-        Bean-->>BeanFactory: Bean Created
+        Bean-->>BeanFactory: Object Created
         deactivate Bean
     end
 
