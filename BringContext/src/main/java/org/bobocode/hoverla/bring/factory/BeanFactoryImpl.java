@@ -22,11 +22,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BeanFactoryImpl implements BeanFactory {
 
-  private Set<BeanFactoryPostProcessor> beanFactoryPostProcessors = new HashSet<>();
+  private final Set<BeanFactoryPostProcessor> beanFactoryPostProcessors = new HashSet<>();
   private BeanDefinitionRegistry beanDefinitionRegistry;
-  private Set<BeanPostProcessor> beanPostProcessors = new HashSet<>();
-  private Map<String, Object> beans = new HashMap<>();
+  private final Set<BeanPostProcessor> beanPostProcessors = new HashSet<>();
+  private final Map<String, Object> beans = new HashMap<>();
 
+  /**
+   * This method set BeanDefinitionRegistry into BeanFactory
+   */
+  @Override
   public void setBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) {
     this.beanDefinitionRegistry = beanDefinitionRegistry;
   }
@@ -50,6 +54,9 @@ public class BeanFactoryImpl implements BeanFactory {
     throw new BeanCreationException("Scope: " + beanDefinition.getScope() + "is not supported");
   }
 
+  /**
+   * This method will return bean if bean with selected name already exist or create it if not
+   */
   @Override
   public Object tryToInitializeSingletonBean(String beanName) {
     if (beans.containsKey(beanName)) {
@@ -119,7 +126,7 @@ public class BeanFactoryImpl implements BeanFactory {
   public BeanDefinition getBeanDefinitionByBeanName(String beanName) {
     BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
     if (beanDefinition == null) {
-      log.info("Can't find BeanDefinition with name {}", beanName);
+      log.warn("Can't find BeanDefinition with name {}", beanName);
     }
     return beanDefinition;
   }

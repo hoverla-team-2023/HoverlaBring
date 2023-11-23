@@ -29,13 +29,13 @@ public class HoverlaApplicationContext implements ApplicationContext {
    *             Please note if you will add as path /com/asd/qwe but you have next class SomeService.class in folder /com/asd/qwe/service it will be also find by scanner
    */
   public HoverlaApplicationContext(String path) {
-    log.debug("Context initialization started, path to scan: {}", path);
+    log.info("Context initialization started, path to scan: {}", path);
     init();
     log.debug("Context initialization finished successfully, starting package scanning");
     beanDefinitionScanner.loadBeanDefinitions(path);
-    log.debug("Scanning components finished successfully");
+    log.info("Scanning components finished successfully");
     doProcessBeans();
-    log.debug("Bean processing finished successfully, app is ready to use");
+    log.info("Bean processing finished successfully, app is ready to use");
   }
 
   /**
