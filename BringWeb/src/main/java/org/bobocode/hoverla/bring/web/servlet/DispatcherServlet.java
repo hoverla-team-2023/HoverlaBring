@@ -1,7 +1,6 @@
 package org.bobocode.hoverla.bring.web.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,10 +11,19 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.bobocode.hoverla.bring.web.servlet.converter.JsonHttpMessageConverter;
+import org.bobocode.hoverla.bring.web.servlet.converter.TextPlainHttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
+import org.bobocode.hoverla.bring.web.servlet.mapping.AnnotationBasedHandlerMapping;
 import org.bobocode.hoverla.bring.web.servlet.mapping.HandlerMapping;
+import org.bobocode.hoverla.bring.web.servlet.processor.PojoReturnValueProcessor;
+import org.bobocode.hoverla.bring.web.servlet.processor.ResponseEntityReturnValueProcessor;
 import org.bobocode.hoverla.bring.web.servlet.processor.ReturnValueProcessor;
+import org.bobocode.hoverla.bring.web.servlet.processor.TextPlainReturnValueProcessor;
 import org.bobocode.hoverla.bring.web.servlet.resolver.HandlerMethodArgumentResolver;
+import org.bobocode.hoverla.bring.web.servlet.resolver.ServletArgumentResolver;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,9 +52,21 @@ public class DispatcherServlet extends HttpServlet {
    */
   @Override
   public void init(ServletConfig config) throws ServletException {
-    this.returnValueProcessors = new ArrayList<>();
-    this.argumentResolvers = new ArrayList<>();
-    this.handlerMappings = new ArrayList<>();
+    var objectMapper = new ObjectMapper();
+
+    var converters = List.of(
+      new TextPlainHttpMessageConverter(),
+      new JsonHttpMessageConverter(objectMapper)
+    );
+
+    this.returnValueProcessors = List.of(
+      new PojoReturnValueProcessor(converters),
+      new ResponseEntityReturnValueProcessor(converters),
+      new TextPlainReturnValueProcessor(converters)
+    );
+
+    this.argumentResolvers = List.of(new ServletArgumentResolver());
+    this.handlerMappings = List.of(new AnnotationBasedHandlerMapping()); // Need to provide Controllers what will be initialized and scanned
   }
 
   @Override

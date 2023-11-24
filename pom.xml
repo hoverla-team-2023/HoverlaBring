@@ -28,6 +28,7 @@
         <mockito.version>5.2.0</mockito.version>
         <log4j.api.version>2.21.1</log4j.api.version>
         <log4j.core.version>2.21.1</log4j.core.version>
+        <commons-lang3.version>3.13.0</commons-lang3.version>
     </properties>
 
     <dependencyManagement>
@@ -99,6 +100,11 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
         </dependency>
     </dependencies>
 
