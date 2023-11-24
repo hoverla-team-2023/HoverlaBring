@@ -5,6 +5,9 @@ import java.io.IOException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import static org.bobocode.hoverla.bring.web.servlet.converter.ContentType.TEXT_PLAIN;
@@ -15,7 +18,11 @@ import static org.bobocode.hoverla.bring.web.util.TypeUtils.isTextPlainType;
  * sets the Content-Type header to "text/plain".
  */
 @Log4j2
+@RequiredArgsConstructor
 public class TextPlainHttpMessageConverter implements HttpMessageConverter {
+
+  // Need it to convert request body to primitive types
+  private final ObjectMapper objectMapper;
 
   @Override
   public boolean canWrite(Class<?> type, String contentType) {
@@ -40,10 +47,9 @@ public class TextPlainHttpMessageConverter implements HttpMessageConverter {
     return isSupportedContentType(contentType) || isTextPlainType(type);
   }
 
-  // TODO: 22.11.2023. not used for now. needs to be implemented further when it's used
   @Override
   public Object read(Class<?> type, HttpServletRequest request, String contentType) throws IOException {
-    return null;
+    return objectMapper.readValue(request.getInputStream(), type);
   }
 
   @Override

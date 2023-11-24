@@ -15,6 +15,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static org.bobocode.hoverla.bring.web.servlet.converter.ContentType.APPLICATION_JSON;
 import static org.bobocode.hoverla.bring.web.servlet.converter.ContentType.TEXT_PLAIN;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -27,10 +29,12 @@ import static org.mockito.Mockito.when;
 class TextPlainHttpMessageConverterTest {
 
   private TextPlainHttpMessageConverter instance;
+  @Mock
+  private ObjectMapper objectMapper;
 
   @BeforeEach
   void setup() {
-    instance = new TextPlainHttpMessageConverter();
+    instance = new TextPlainHttpMessageConverter(objectMapper);
   }
 
   @Test

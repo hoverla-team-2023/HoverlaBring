@@ -128,16 +128,18 @@ public class DispatcherServlet extends HttpServlet {
    * @throws IOException If an I/O exception occurs.
    */
   private void processReturnValue(Object returnValue, HandlerMethod method, HttpServletResponse response) throws IOException {
-    for (ReturnValueProcessor processor : returnValueProcessors) {
-      if (processor.supports(returnValue.getClass())) {
-        if (processor.processReturnValue(returnValue, method, response)) {
-          return; // Successfully processed the return value
+    if (returnValue != null) {
+      for (ReturnValueProcessor processor : returnValueProcessors) {
+        if (processor.supports(returnValue.getClass())) {
+          if (processor.processReturnValue(returnValue, method, response)) {
+            return; // Successfully processed the return value
+          }
         }
       }
-    }
 
-    // No suitable processor found
-    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      // No suitable processor found
+      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
   }
 
 }

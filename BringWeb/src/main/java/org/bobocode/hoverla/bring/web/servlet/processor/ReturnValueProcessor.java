@@ -14,6 +14,7 @@ import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
  * @see AbstractReturnValueProcessor
  * @see TextPlainReturnValueProcessor
  * @see ResponseEntityReturnValueProcessor
+ * @see PojoReturnValueProcessor
  * @see ResponseEntity
  */
 public interface ReturnValueProcessor {
