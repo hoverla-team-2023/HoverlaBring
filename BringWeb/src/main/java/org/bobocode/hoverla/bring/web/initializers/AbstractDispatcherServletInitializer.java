@@ -1,8 +1,10 @@
 package org.bobocode.hoverla.bring.web.initializers;
 
 import jakarta.servlet.ServletContext;
-import lombok.extern.slf4j.Slf4j;
+
 import org.bobocode.hoverla.bring.web.servlet.DispatcherServlet;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Basic {@link ServletInitializer} implementation. This initializer allows developers to easily register a {@link DispatcherServlet} in the servlet container
@@ -18,7 +20,7 @@ public abstract class AbstractDispatcherServletInitializer implements ServletIni
    */
   @Override
   public void onStartup(ServletContext servletContext) {
-    var servlet = new DispatcherServlet(servletContext);
+    var servlet = new DispatcherServlet(servletContext, controllers());
     var registration = servletContext.addServlet("dispatcher", servlet);
     registration.setLoadOnStartup(1);
     registration.setAsyncSupported(true);
@@ -33,5 +35,7 @@ public abstract class AbstractDispatcherServletInitializer implements ServletIni
    * @return mapping URL
    */
   protected abstract String getServletMapping();
+  //todo temporary
+  protected abstract Object[] controllers();
 
 }

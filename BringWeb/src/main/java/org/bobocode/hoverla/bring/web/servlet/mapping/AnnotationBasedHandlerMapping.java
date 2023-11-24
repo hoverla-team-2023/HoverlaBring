@@ -59,7 +59,7 @@ public class AnnotationBasedHandlerMapping implements HandlerMapping {
    */
   @Override
   public HandlerMethod getHandlerMethod(HttpServletRequest request) {
-    String requestPath = request.getPathInfo();
+    String requestPath = request.getRequestURI();
     for (Map.Entry<String, HandlerMethod> entry : handlerMethods.entrySet()) {
       HandlerMethod handlerMethod = entry.getValue();
       if (pathMatcher.match(handlerMethod.getPath(), requestPath)) {

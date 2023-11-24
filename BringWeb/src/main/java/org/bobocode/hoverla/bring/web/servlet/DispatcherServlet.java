@@ -11,23 +11,31 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
+import org.bobocode.hoverla.bring.web.servlet.converter.JsonHttpMessageConverter;
+import org.bobocode.hoverla.bring.web.servlet.converter.TextPlainHttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 import org.bobocode.hoverla.bring.web.servlet.mapping.AnnotationBasedHandlerMapping;
 import org.bobocode.hoverla.bring.web.servlet.mapping.HandlerMapping;
+import org.bobocode.hoverla.bring.web.servlet.processor.PojoReturnValueProcessor;
+import org.bobocode.hoverla.bring.web.servlet.processor.ResponseEntityReturnValueProcessor;
 import org.bobocode.hoverla.bring.web.servlet.processor.ReturnValueProcessor;
-import org.bobocode.hoverla.bring.web.servlet.processor.StringReturnValueProcessor;
+import org.bobocode.hoverla.bring.web.servlet.processor.TextPlainReturnValueProcessor;
 import org.bobocode.hoverla.bring.web.servlet.resolver.HandlerMethodArgumentResolver;
+import org.bobocode.hoverla.bring.web.servlet.resolver.QueryParamArgumentResolver;
 import org.bobocode.hoverla.bring.web.servlet.resolver.ServletArgumentResolver;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Basic {@link HttpServlet} implementation
  * DispatcherServlet handles incoming requests, processes them,
  * and dispatches them to appropriate handler methods.
  */
-@Slf4j
+@Log4j2
 @RequiredArgsConstructor
 public class DispatcherServlet extends HttpServlet {
 
@@ -36,6 +44,8 @@ public class DispatcherServlet extends HttpServlet {
   private List<ReturnValueProcessor> returnValueProcessors;
   private List<HandlerMethodArgumentResolver> argumentResolvers;
   private List<HandlerMapping> handlerMappings;
+
+  private final Object[] controllers;
 
   /**
    * Initializes the servlet with the given configuration.
@@ -46,13 +56,22 @@ public class DispatcherServlet extends HttpServlet {
    */
   @Override
   public void init(ServletConfig config) throws ServletException {
-    this.returnValueProcessors = List.of(new StringReturnValueProcessor());
-    this.argumentResolvers = List.of(new ServletArgumentResolver());
-    this.handlerMappings = List.of(new AnnotationBasedHandlerMapping()); // Need to provide Controllers what will be initialized and scanned
-  }
+    super.init(config);
+    // todo add logs
+    List<HttpMessageConverter> converters = List.of(new TextPlainHttpMessageConverter(),
+                                                    new JsonHttpMessageConverter(new ObjectMapper()));
 
+    this.returnValueProcessors = List.of(new PojoReturnValueProcessor(converters),
+                                         new ResponseEntityReturnValueProcessor(converters),
+                                         new TextPlainReturnValueProcessor(converters));
+
+    this.argumentResolvers = List.of(new QueryParamArgumentResolver(),
+                                     new ServletArgumentResolver());
+    this.handlerMappings = List.of(new AnnotationBasedHandlerMapping(controllers)); // Need to provide Controllers what will be initialized and scanned
+  }
+  //todo add doPost...
   @Override
-  protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     processRequest(req, resp);
   }
 
