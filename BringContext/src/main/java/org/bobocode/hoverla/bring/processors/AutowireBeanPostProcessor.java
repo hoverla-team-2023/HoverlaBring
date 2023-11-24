@@ -18,8 +18,6 @@ public class AutowireBeanPostProcessor implements BeanPostProcessor {
 
   private BeanFactory beanFactory;
 
-  List<String> candidateNames = new ArrayList<>();
-
   public AutowireBeanPostProcessor(BeanFactory beanFactory) {
     this.beanFactory = beanFactory;
   }
@@ -47,20 +45,24 @@ public class AutowireBeanPostProcessor implements BeanPostProcessor {
     if (targetClass.getDeclaredFields().length > 0) {
       for (Field field : targetClass.getDeclaredFields()) {
         if (field.isAnnotationPresent(Autowired.class)) {
-          BeanDefinition candidate = defineRequiredBeanBeanDefinition(beanDefinitionByBeanName, field);
-          Object beanToInject = beanFactory.getBean(candidate.getBeanName());
-          field.setAccessible(true);
-          try {
-            ReflectionUtil.setFieldValue(field, bean, beanToInject);
-          } catch (IllegalArgumentException e) {
-            throw new BeanInjectionException("Failed to inject field " + field.getName() + " to bean " + beanName + ". Candidate object " + bean, e);
-          }
+          injectDependency(bean, beanName, beanDefinitionByBeanName, field);
         }
       }
     } else {
       log.debug("No fields to inject found for beam with name: {}", beanName);
     }
     return bean;
+  }
+
+  private void injectDependency(Object bean, String beanName, BeanDefinition beanDefinitionByBeanName, Field field) {
+    BeanDefinition candidate = defineRequiredBeanBeanDefinition(beanDefinitionByBeanName, field);
+    Object beanToInject = beanFactory.getBean(candidate.getBeanName());
+    field.setAccessible(true);
+    try {
+      ReflectionUtil.setFieldValue(field, bean, beanToInject);
+    } catch (IllegalArgumentException e) {
+      throw new BeanInjectionException("Failed to inject field " + field.getName() + " to bean " + beanName + ". Candidate object " + bean, e);
+    }
   }
 
   private BeanDefinition defineRequiredBeanBeanDefinition(BeanDefinition beanDefinition, Field injectionCandidate) {
