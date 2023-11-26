@@ -28,14 +28,14 @@ import org.bobocode.hoverla.bring.web.servlet.resolver.ServletArgumentResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Basic {@link HttpServlet} implementation
  * DispatcherServlet handles incoming requests, processes them,
  * and dispatches them to appropriate handler methods.
  */
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class DispatcherServlet extends HttpServlet {
 
@@ -69,6 +69,7 @@ public class DispatcherServlet extends HttpServlet {
                                      new ServletArgumentResolver());
     this.handlerMappings = List.of(new AnnotationBasedHandlerMapping(controllers)); // Need to provide Controllers what will be initialized and scanned
   }
+
   //todo add doPost...
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

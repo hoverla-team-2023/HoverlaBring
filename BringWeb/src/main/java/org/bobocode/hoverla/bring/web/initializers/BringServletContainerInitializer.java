@@ -10,6 +10,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
+import org.bobocode.hoverla.bring.web.util.BannerUtils;
+
 /**
  * Basic {@link ServletContainerInitializer} implementation. It is invoked by a servlet container when the web application is started.
  * The implementation receives all classes of type specified by the {@link HandlesTypes} annotation, which is a standard part of the Servlet API
@@ -36,7 +38,7 @@ public class BringServletContainerInitializer implements ServletContainerInitial
   @Override
   public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
     log.trace("Initializing servlet container");
-
+    BannerUtils.printBanner("/banner_hoverla.txt");
     var initializerClass = classes.stream()
       .filter(this::isServletInitializer)
       .findFirst();
