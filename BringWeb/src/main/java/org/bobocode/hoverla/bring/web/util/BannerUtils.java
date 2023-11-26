@@ -22,7 +22,7 @@ public class BannerUtils {
         log.warn("Banner with path: {} is not found in classpath", bannerFilePath);
       }
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      log.warn("Printing banner with path: {} is failed", bannerFilePath, e);
     }
 
   }
