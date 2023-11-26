@@ -1,6 +1,6 @@
 package org.bobocode.hoverla.bring.web.servlet.handler;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class is used to match HTTP request paths against patterns.
@@ -14,7 +14,7 @@ import lombok.extern.log4j.Log4j2;
  * For example, the pattern "/user/{username}" would match "/user/john" and "/user/abdul", "/user/john/details".
  */
 
-@Log4j2
+@Slf4j
 public class AntPathMatcher {
 
   /**

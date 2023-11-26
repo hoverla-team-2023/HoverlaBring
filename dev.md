@@ -86,7 +86,7 @@ public void givenRadius_whenCalculateArea_thenReturnArea(){
 ## Logging
 
 This project leverages Log4j2 as a logging framework. To customize Log4j2 configuration, refer to `BringContext/src/main/resources/log4j2.yaml`. 
-In your classes, use Lombok's `@Log4j2` annotation to create a static variable named **log** for logging.
+In your classes, use Lombok's `@Sl4j` annotation to create a static variable named **log** for logging.
 
 Log4j2 provides 6 levels of logs:
 
@@ -109,9 +109,9 @@ Log4j order: TRACE < DEBUG < INFO < WARN < ERROR < FATAL
 ### Example
 
    ```java
-   import lombok.extern.log4j.Log4j2;
-   
-   @Log4j2
+   import lombok.extern.slf4j.Slf4j;
+
+   @Slf4j
    public class Main {
    
      public static void main(String[] args) {

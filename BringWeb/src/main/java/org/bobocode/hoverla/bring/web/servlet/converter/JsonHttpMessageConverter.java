@@ -10,7 +10,7 @@ import org.bobocode.hoverla.bring.web.exceptions.ObjectSerializingException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import static org.bobocode.hoverla.bring.web.servlet.converter.ContentType.APPLICATION_JSON;
 import static org.bobocode.hoverla.bring.web.util.TypeUtils.isTextPlainType;
@@ -19,7 +19,7 @@ import static org.bobocode.hoverla.bring.web.util.TypeUtils.isTextPlainType;
  * Message converter for JSON responses. It converts the response body into a JSON string and
  * sets the Content-Type header to "application/json".
  */
-@Log4j2
+@Slf4j
 public class JsonHttpMessageConverter implements HttpMessageConverter {
 
   private final ObjectMapper objectMapper;
