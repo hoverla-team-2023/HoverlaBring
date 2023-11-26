@@ -20,16 +20,12 @@ jobs:
           distribution: 'adopt'
 
       - name: Build and Test with Maven
-        run: mvn -B clean test package --file pom.xml
-
-      - name: Generate JaCoCo report
-        run: mvn jacoco:report
+        run: mvn -B clean test
 
       - name: SonarQube Scan
         run: |
-          mvn -B verify sonar:sonar \
+           mvn -B verify sonar:sonar \
             -Dsonar.projectKey=hoverla-team-2023_HoverlaBring_AYwIBAvijYd-lSknBhZO \
             -Dsonar.projectName='HoverlaBring' \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
