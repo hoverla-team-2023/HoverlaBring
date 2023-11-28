@@ -5,6 +5,8 @@ import java.lang.reflect.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -37,7 +39,7 @@ public class ServletArgumentResolver implements HandlerMethodArgumentResolver {
    * @return the resolved argument
    */
   @Override
-  public Object resolveArgument(Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
+  public Object resolveArgument(HandlerMethod handlerMethod, Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
     if (HttpServletRequest.class.isAssignableFrom(parameter.getType())) {
       return request;
     } else if (HttpServletResponse.class.isAssignableFrom(parameter.getType())) {
