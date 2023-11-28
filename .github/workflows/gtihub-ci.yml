@@ -19,8 +19,13 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+      - name: Build and Test with Maven
+        run: mvn -B clean test
 
-      - name: Test with Maven
-        run: mvn test
+      - name: SonarQube Scan
+        run: |
+           mvn -B verify sonar:sonar \
+            -Dsonar.projectKey=hoverla-team-2023_HoverlaBring_AYwIBAvijYd-lSknBhZO \
+            -Dsonar.projectName='HoverlaBring' \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
