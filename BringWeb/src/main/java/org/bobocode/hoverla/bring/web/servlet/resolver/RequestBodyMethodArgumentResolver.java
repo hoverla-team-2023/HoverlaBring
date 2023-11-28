@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.bobocode.hoverla.bring.web.annotations.RequestBody;
 import org.bobocode.hoverla.bring.web.exceptions.InvalidContentTypeException;
 import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
+import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -30,7 +31,7 @@ public class RequestBodyMethodArgumentResolver extends HttpMessageConverterDeleg
   }
 
   @Override
-  public Object resolveArgument(Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
+  public Object resolveArgument(HandlerMethod handlerMethod, Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
     var contentType = request.getContentType();
     verifyContentType(contentType);
 

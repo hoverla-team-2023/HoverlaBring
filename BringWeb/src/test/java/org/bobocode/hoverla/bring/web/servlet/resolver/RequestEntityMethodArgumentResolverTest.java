@@ -100,7 +100,7 @@ class RequestEntityMethodArgumentResolverTest {
     when(messageConverter.canRead(genericType, contentType)).thenReturn(true);
     when(messageConverter.read(genericType, request, contentType)).thenReturn(expected);
 
-    var actual = instance.resolveArgument(parameter, request, null);
+    var actual = instance.resolveArgument(null, parameter, request, null);
 
     assertTrue(RequestEntity.class.isAssignableFrom(actual.getClass()));
     var actualRequestEntity = (RequestEntity<?>) actual;

@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.bobocode.hoverla.bring.web.exceptions.MessageConverterNotFoundException;
 import org.bobocode.hoverla.bring.web.exceptions.ObjectDeserializationException;
 import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
+import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +45,7 @@ class HttpMessageConverterDelegatingArgumentResolverTest {
     }
 
     @Override
-    public Object resolveArgument(Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
+    public Object resolveArgument(HandlerMethod handlerMethod, Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
       return null;
     }
 

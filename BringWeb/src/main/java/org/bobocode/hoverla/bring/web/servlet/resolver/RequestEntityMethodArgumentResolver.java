@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.entity.RequestEntity;
+import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -32,7 +33,7 @@ public class RequestEntityMethodArgumentResolver extends HttpMessageConverterDel
   }
 
   @Override
-  public Object resolveArgument(Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
+  public Object resolveArgument(HandlerMethod handlerMethod, Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
     var genericType = getGenericType(parameter);
     log.debug("Converting request body to {}", genericType);
 

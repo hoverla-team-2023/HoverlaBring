@@ -71,7 +71,7 @@ class RequestBodyMethodArgumentResolverTest {
     when(messageConverter.canRead(type, contentType)).thenReturn(true);
     when(messageConverter.read(type, request, contentType)).thenReturn(expected);
 
-    var actual = instance.resolveArgument(parameter, request, null);
+    var actual = instance.resolveArgument(null, parameter, request, null);
     assertEquals(expected, actual);
 
     verify(messageConverter).canRead(type, contentType);
@@ -89,7 +89,7 @@ class RequestBodyMethodArgumentResolverTest {
     when(request.getContentType()).thenReturn(contentType);
     when(messageConverter.canRead(type, contentType)).thenReturn(false);
 
-    assertThrows(MessageConverterNotFoundException.class, () -> instance.resolveArgument(parameter, request, null));
+    assertThrows(MessageConverterNotFoundException.class, () -> instance.resolveArgument(null, parameter, request, null));
 
     verify(messageConverter).canRead(type, contentType);
     verify(messageConverter, never()).read(any(), any(), any());
@@ -107,7 +107,7 @@ class RequestBodyMethodArgumentResolverTest {
     when(messageConverter.canRead(type, contentType)).thenReturn(true);
     when(messageConverter.read(type, request, contentType)).thenThrow(IOException.class);
 
-    assertThrows(ObjectDeserializationException.class, () -> instance.resolveArgument(parameter, request, null));
+    assertThrows(ObjectDeserializationException.class, () -> instance.resolveArgument(null, parameter, request, null));
 
     verify(messageConverter).canRead(type, contentType);
     verify(messageConverter).read(type, request, contentType);
@@ -117,7 +117,7 @@ class RequestBodyMethodArgumentResolverTest {
   void givenNoContentType_whenResolveArgument_thenThrowInvalidContentTypeException(@Mock HttpServletRequest request) throws NoSuchMethodException {
     var parameter = getClass().getDeclaredMethod("mockMethod", List.class).getParameters()[0];
 
-    assertThrows(InvalidContentTypeException.class, () -> instance.resolveArgument(parameter, request, null));
+    assertThrows(InvalidContentTypeException.class, () -> instance.resolveArgument(null, parameter, request, null));
 
     verifyNoInteractions(messageConverter);
   }
