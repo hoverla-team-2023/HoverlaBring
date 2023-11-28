@@ -3,10 +3,10 @@ package org.bobocode.hoverla.bring.web.servlet.entity;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 
-@ToString
+@Getter
 @RequiredArgsConstructor
 public class RequestEntity<T> {
 

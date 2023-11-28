@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.stream.Stream;
 
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.bobocode.hoverla.bring.web.exceptions.ObjectSerializingException;
@@ -21,6 +23,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.bobocode.hoverla.bring.web.servlet.converter.ContentType.APPLICATION_JSON;
+import static org.bobocode.hoverla.bring.web.servlet.converter.ContentType.TEXT_PLAIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -166,6 +169,35 @@ class JsonHttpMessageConverterTest {
   @MethodSource("unsupportedTypes")
   void givenNoContentTypeAndPrimitiveOrStringReturnType_whenCanRead_thenReturnFalse(Class<?> type) {
     var result = instance.canRead(type, null);
+    assertFalse(result);
+  }
+
+  @Test
+  void givenType_whenRead_theConstructTypeAndReadValue(
+    @Mock HttpServletRequest request,
+    @Mock ServletInputStream inputStream,
+    @Mock JavaType javaType
+  ) throws IOException {
+    var type = Pojo.class;
+
+    when(request.getInputStream()).thenReturn(inputStream);
+    when(objectMapper.constructType(type)).thenReturn(javaType);
+
+    instance.read(type, request, null);
+
+    verify(objectMapper).constructType(type);
+    verify(objectMapper).readValue(inputStream, javaType);
+  }
+
+  @Test
+  void givenApplicationJsonContentType_whenIsSupportedContentType_thenReturnsTrue() {
+    var result = instance.isSupportedContentType(APPLICATION_JSON.getValue());
+    assertTrue(result);
+  }
+
+  @Test
+  void givenTextPlainContentType_whenIsSupportedContentType_thenReturnsFalse() {
+    var result = instance.isSupportedContentType(TEXT_PLAIN.getValue());
     assertFalse(result);
   }
 

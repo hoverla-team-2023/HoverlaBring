@@ -18,7 +18,7 @@ import static org.bobocode.hoverla.bring.web.servlet.converter.ContentType.APPLI
  * {@link HandlerMethodArgumentResolver} that handles {@link RequestBody} parameters. Only <code>Content-Type: application/json</code> is supported.
  */
 @Log4j2
-public class RequestBodyMethodArgumentResolver extends DelegatingHttpMessageConverterArgumentResolver {
+public class RequestBodyMethodArgumentResolver extends HttpMessageConverterDelegatingArgumentResolver {
 
   public RequestBodyMethodArgumentResolver(List<HttpMessageConverter> messageConverters) {
     super(messageConverters);
@@ -37,7 +37,7 @@ public class RequestBodyMethodArgumentResolver extends DelegatingHttpMessageConv
     var type = parameter.getParameterizedType();
     log.debug("Converting request body to {}", type.getTypeName());
 
-    return readRequestBody(type, request, contentType);
+    return readRequestBody(type, request);
   }
 
   private void verifyContentType(String contentType) {

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.stream.Stream;
 
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +17,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.bobocode.hoverla.bring.web.servlet.converter.ContentType.APPLICATION_JSON;
@@ -132,6 +135,23 @@ class TextPlainHttpMessageConverterTest {
   void givenNoSupportedContentTypeAndIsNotPrimitiveOrStringReturnType_whenCanRead_thenReturnsFalse() {
     var result = instance.canRead(Object.class, null);
     assertFalse(result);
+  }
+
+  @ParameterizedTest
+  @MethodSource("supportedTypes")
+  void givenType_whenRead_theConstructTypeAndReadValue(
+    Class<?> type,
+    @Mock HttpServletRequest request,
+    @Mock ServletInputStream inputStream,
+    @Mock JavaType javaType
+  ) throws IOException {
+    when(request.getInputStream()).thenReturn(inputStream);
+    when(objectMapper.constructType(type)).thenReturn(javaType);
+
+    instance.read(type, request, null);
+
+    verify(objectMapper).constructType(type);
+    verify(objectMapper).readValue(inputStream, javaType);
   }
 
   @Test

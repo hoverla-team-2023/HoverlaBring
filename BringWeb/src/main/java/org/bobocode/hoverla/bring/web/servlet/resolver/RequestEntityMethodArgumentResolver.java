@@ -20,7 +20,7 @@ import lombok.extern.log4j.Log4j2;
  * Supports {@link RequestEntity}
  */
 @Log4j2
-public class RequestEntityMethodArgumentResolver extends DelegatingHttpMessageConverterArgumentResolver {
+public class RequestEntityMethodArgumentResolver extends HttpMessageConverterDelegatingArgumentResolver {
 
   public RequestEntityMethodArgumentResolver(List<HttpMessageConverter> messageConverters) {
     super(messageConverters);
@@ -33,11 +33,10 @@ public class RequestEntityMethodArgumentResolver extends DelegatingHttpMessageCo
 
   @Override
   public Object resolveArgument(Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
-
     var genericType = getGenericType(parameter);
     log.debug("Converting request body to {}", genericType);
 
-    var body = readRequestBody(genericType, request, request.getContentType());
+    var body = readRequestBody(genericType, request);
     return new RequestEntity<>(getHeaders(request), body);
   }
 

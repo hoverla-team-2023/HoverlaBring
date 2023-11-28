@@ -6,6 +6,7 @@ import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.bobocode.hoverla.bring.web.exceptions.MessageConverterNotFoundException;
 import org.bobocode.hoverla.bring.web.exceptions.ObjectDeserializationException;
 import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
 
@@ -18,12 +19,13 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RequiredArgsConstructor
-public abstract class DelegatingHttpMessageConverterArgumentResolver implements HandlerMethodArgumentResolver {
+public abstract class HttpMessageConverterDelegatingArgumentResolver implements HandlerMethodArgumentResolver {
 
   private final List<HttpMessageConverter> messageConverters;
 
-  protected Object readRequestBody(Type type, HttpServletRequest request, String contentType) {
-    var messageConverter = findConverter(type, request.getContentType());
+  protected Object readRequestBody(Type type, HttpServletRequest request) {
+    var contentType = request.getContentType();
+    var messageConverter = findConverter(type, contentType);
 
     try {
       return messageConverter.read(type, request, contentType);
@@ -39,7 +41,12 @@ public abstract class DelegatingHttpMessageConverterArgumentResolver implements 
     return messageConverters.stream()
       .filter(converter -> converter.canRead(type, contentType))
       .findFirst()
-      .orElseThrow(() -> new RuntimeException("No message converter found for " + type.getTypeName()));
+      .orElseThrow(() -> {
+        var message = "No message converter found for type %s, content-type: %s".formatted(type.getTypeName(), contentType);
+
+        log.error(message);
+        return new MessageConverterNotFoundException(message);
+      });
   }
 
 }
