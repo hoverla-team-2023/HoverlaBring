@@ -44,7 +44,8 @@ public class AnnotationBasedHandlerMapping implements HandlerMapping {
           RequestMapping mapping = method.getAnnotation(RequestMapping.class);
           String path = mapping.path();
           RequestMethod requestMethod = mapping.method();
-          handlerMethods.put(path + ":" + requestMethod.name(), new HandlerMethod(controller.getClass(), method, path, method.getParameters(), controller, requestMethod));
+          handlerMethods.put(path + ":" + requestMethod.name(),
+                             new HandlerMethod(controller.getClass(), method, path, method.getParameters(), controller, requestMethod));
         }
       }
     }
@@ -65,7 +66,7 @@ public class AnnotationBasedHandlerMapping implements HandlerMapping {
     RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
     for (Map.Entry<String, HandlerMethod> entry : handlerMethods.entrySet()) {
       HandlerMethod handlerMethod = entry.getValue();
-      if (pathMatcher.match(handlerMethod.getPath() + ":" + handlerMethod.getMethod().getName(), requestPath + ":" + requestMethod.name())) {
+      if (pathMatcher.match(handlerMethod.getPath(), requestPath) && requestMethod.name().equals(handlerMethod.getRequestMethod().name())) {
         return handlerMethod;
       }
     }

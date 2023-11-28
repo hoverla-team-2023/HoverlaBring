@@ -13,6 +13,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.bobocode.hoverla.bring.web.annotations.QueryParam;
 import org.bobocode.hoverla.bring.web.exceptions.ObjectDeserializationException;
+import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -51,7 +52,7 @@ public class QueryParamArgumentResolver implements HandlerMethodArgumentResolver
   }
 
   @Override
-  public Object resolveArgument(Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
+  public Object resolveArgument(HandlerMethod handlerMethod, Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
     QueryParam queryParamAnnotation = parameter.getAnnotation(QueryParam.class);
     String queryParamName = queryParamAnnotation.value();
 

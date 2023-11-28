@@ -85,7 +85,7 @@ class QueryParamArgumentResolverTest {
       when(request).
       getParameterValues(parameter.getAnnotation(QueryParam.class).value());
 
-    Object argument = queryParamArgumentResolver.resolveArgument(parameter, request, response);
+    Object argument = queryParamArgumentResolver.resolveArgument(null, parameter, request, response);
 
     assertThat(argument).isEqualTo(paramValue);
     try {
@@ -109,7 +109,7 @@ class QueryParamArgumentResolverTest {
         return new IllegalArgumentException("Method not found");
       });
 
-    Object argument = queryParamArgumentResolver.resolveArgument(parameter, request, response);
+    Object argument = queryParamArgumentResolver.resolveArgument(null, parameter, request, response);
 
     assertThat(argument).isNull();
   }
@@ -140,7 +140,7 @@ class QueryParamArgumentResolverTest {
       getParameterValues(name);
 
     assertThat(queryParamArgumentResolver.supportsParameter(parameter)).isEqualTo(true);
-    Object argument = queryParamArgumentResolver.resolveArgument(parameter, request, response);
+    Object argument = queryParamArgumentResolver.resolveArgument(null, parameter, request, response);
 
     if (Collection.class.isAssignableFrom(parameter.getType())) {
       assertThatCollection((Collection<?>) argument).isEqualTo(expectedValue);
@@ -177,7 +177,7 @@ class QueryParamArgumentResolverTest {
       when(request).
       getParameterValues(name);
 
-    assertThatThrownBy(() -> {queryParamArgumentResolver.resolveArgument(parameter, request, response);})
+    assertThatThrownBy(() -> {queryParamArgumentResolver.resolveArgument(null, parameter, request, response);})
       .isInstanceOf(ObjectDeserializationException.class);
   }
 

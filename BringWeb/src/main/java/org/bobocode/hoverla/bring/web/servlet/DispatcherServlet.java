@@ -170,7 +170,7 @@ public class DispatcherServlet extends HttpServlet {
     return Arrays.stream(handlerMethod.getParameters())
       .flatMap(parameter -> argumentResolvers.stream()
         .filter(resolver -> resolver.supportsParameter(parameter))
-        .map(resolver -> resolver.resolveArgument(parameter, request, response)))
+        .map(resolver -> resolver.resolveArgument(handlerMethod, parameter, request, response)))
       .toList()
       .toArray();
   }
