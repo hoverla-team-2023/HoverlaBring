@@ -4,15 +4,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
+import org.bobocode.hoverla.bring.web.annotations.RequestMethod;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Represents a handler method that can process incoming requests.
  */
 @Data
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class HandlerMethod {
 
@@ -40,6 +42,11 @@ public class HandlerMethod {
    * The instance of the bean containing the handler method.
    */
   private final Object bean;
+
+  /**
+   * The enum of the  HTTP  request methods.
+   */
+  private final RequestMethod requestMethod;
 
   /**
    * Handles the incoming request by invoking the handler method with resolved arguments.

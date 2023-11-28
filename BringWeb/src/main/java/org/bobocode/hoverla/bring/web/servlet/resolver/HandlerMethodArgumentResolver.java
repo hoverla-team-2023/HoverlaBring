@@ -5,6 +5,8 @@ import java.lang.reflect.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
+
 /**
  * Interface to be implemented by classes that can resolve method parameters
  * in the context of a handler method.
@@ -38,7 +40,7 @@ public interface HandlerMethodArgumentResolver {
    *
    * @return the resolved argument value for the method parameter
    */
-  Object resolveArgument(Parameter parameter, HttpServletRequest request, HttpServletResponse response);
+  Object resolveArgument(HandlerMethod handlerMethod, Parameter parameter, HttpServletRequest request, HttpServletResponse response);
 
 }
 

@@ -1,5 +1,6 @@
 package org.bobocode.hoverla.bring.web.demo;
 
+import org.bobocode.hoverla.bring.web.demo.controllers.HoverlaController;
 import org.bobocode.hoverla.bring.web.initializers.AbstractDispatcherServletInitializer;
 
 public class DispatcherServletConfiguration extends AbstractDispatcherServletInitializer {
@@ -7,6 +8,11 @@ public class DispatcherServletConfiguration extends AbstractDispatcherServletIni
   @Override
   protected String getServletMapping() {
     return "/";
+  }
+
+  @Override
+  protected Object[] controllers() {
+    return new Object[]{new HoverlaController() };
   }
 
 }

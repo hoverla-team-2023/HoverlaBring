@@ -19,7 +19,7 @@ import org.bobocode.hoverla.bring.bean.BeanDefinition;
 import org.bobocode.hoverla.bring.bean.BeanScope;
 import org.bobocode.hoverla.bring.utils.BeanUtils;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import static org.bobocode.hoverla.bring.utils.PathUtils.getClassName;
 import static org.bobocode.hoverla.bring.utils.PathUtils.getFiles;
@@ -27,7 +27,7 @@ import static org.bobocode.hoverla.bring.utils.PathUtils.getPackageName;
 import static org.bobocode.hoverla.bring.utils.PathUtils.isClass;
 import static org.bobocode.hoverla.bring.utils.PathUtils.toFileSystemPath;
 
-@Log4j2
+@Slf4j
 public class BeanDefinitionScannerImpl implements BeanDefinitionScanner {
 
   private final BeanDefinitionRegistry registry;

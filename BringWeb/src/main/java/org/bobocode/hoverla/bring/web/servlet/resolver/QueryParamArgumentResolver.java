@@ -13,11 +13,12 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.bobocode.hoverla.bring.web.annotations.QueryParam;
 import org.bobocode.hoverla.bring.web.exceptions.ObjectDeserializationException;
+import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Resolves method parameters annotated with {@link QueryParam}.
@@ -40,7 +41,7 @@ import lombok.extern.log4j.Log4j2;
  * <p>
  * Note: This resolver does not handle complex cases and assumes a simple use case.
  */
-@Log4j2
+@Slf4j
 public class QueryParamArgumentResolver implements HandlerMethodArgumentResolver {
 
   private final ObjectMapper mapper = new CsvMapper();
@@ -51,7 +52,7 @@ public class QueryParamArgumentResolver implements HandlerMethodArgumentResolver
   }
 
   @Override
-  public Object resolveArgument(Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
+  public Object resolveArgument(HandlerMethod handlerMethod, Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
     QueryParam queryParamAnnotation = parameter.getAnnotation(QueryParam.class);
     String queryParamName = queryParamAnnotation.value();
 

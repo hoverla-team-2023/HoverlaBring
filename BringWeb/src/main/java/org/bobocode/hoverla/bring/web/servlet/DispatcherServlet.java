@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.converter.JsonHttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.converter.TextPlainHttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
@@ -21,6 +22,8 @@ import org.bobocode.hoverla.bring.web.servlet.processor.ResponseEntityReturnValu
 import org.bobocode.hoverla.bring.web.servlet.processor.ReturnValueProcessor;
 import org.bobocode.hoverla.bring.web.servlet.processor.TextPlainReturnValueProcessor;
 import org.bobocode.hoverla.bring.web.servlet.resolver.HandlerMethodArgumentResolver;
+import org.bobocode.hoverla.bring.web.servlet.resolver.PathVariableArgumentResolver;
+import org.bobocode.hoverla.bring.web.servlet.resolver.QueryParamArgumentResolver;
 import org.bobocode.hoverla.bring.web.servlet.resolver.ServletArgumentResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,11 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Basic {@link HttpServlet} implementation
- * DispatcherServlet handles incoming requests, processes them,
- * and dispatches them to appropriate handler methods.
- */
 @Slf4j
 @RequiredArgsConstructor
 public class DispatcherServlet extends HttpServlet {
@@ -43,6 +41,8 @@ public class DispatcherServlet extends HttpServlet {
   private List<HandlerMethodArgumentResolver> argumentResolvers;
   private List<HandlerMapping> handlerMappings;
 
+  private final Object[] controllers;
+
   /**
    * Initializes the servlet with the given configuration.
    *
@@ -52,25 +52,62 @@ public class DispatcherServlet extends HttpServlet {
    */
   @Override
   public void init(ServletConfig config) throws ServletException {
-    var objectMapper = new ObjectMapper();
+    super.init(config);
+    // todo add logs
+    List<HttpMessageConverter> converters = List.of(new TextPlainHttpMessageConverter(),
+                                                    new JsonHttpMessageConverter(new ObjectMapper()));
 
-    var converters = List.of(
-      new TextPlainHttpMessageConverter(),
-      new JsonHttpMessageConverter(objectMapper)
-    );
+    this.returnValueProcessors = List.of(new PojoReturnValueProcessor(converters),
+                                         new ResponseEntityReturnValueProcessor(converters),
+                                         new TextPlainReturnValueProcessor(converters));
 
-    this.returnValueProcessors = List.of(
-      new PojoReturnValueProcessor(converters),
-      new ResponseEntityReturnValueProcessor(converters),
-      new TextPlainReturnValueProcessor(converters)
-    );
-
-    this.argumentResolvers = List.of(new ServletArgumentResolver());
-    this.handlerMappings = List.of(new AnnotationBasedHandlerMapping()); // Need to provide Controllers what will be initialized and scanned
+    this.argumentResolvers = List.of(new QueryParamArgumentResolver(),
+                                     new ServletArgumentResolver(),
+                                     new PathVariableArgumentResolver());
+    this.handlerMappings = List.of(new AnnotationBasedHandlerMapping(controllers)); // Need to provide Controllers what will be initialized and scanned
   }
 
   @Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    processRequest(req, resp);
+  }
+
+  @Override
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    processRequest(req, resp);
+  }
+  @Override
+  protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    processRequest(req, resp);
+  }
+
+  @Override
+  protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    processRequest(req, resp);
+  }
+  @Override
+  protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    processRequest(req, resp);
+  }
+  @Override
   protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    String method = req.getMethod();
+    if (method.equals("PATCH")) {
+      doPatch(req, resp);
+    } else {
+      super.service(req, resp);
+    }
+  }
+  protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+  }
+  @Override
+  protected void doTrace(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    processRequest(req, resp);
+  }
+
+  @Override
+  protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     processRequest(req, resp);
   }
 
@@ -133,7 +170,7 @@ public class DispatcherServlet extends HttpServlet {
     return Arrays.stream(handlerMethod.getParameters())
       .flatMap(parameter -> argumentResolvers.stream()
         .filter(resolver -> resolver.supportsParameter(parameter))
-        .map(resolver -> resolver.resolveArgument(parameter, request, response)))
+        .map(resolver -> resolver.resolveArgument(handlerMethod, parameter, request, response)))
       .toList()
       .toArray();
   }

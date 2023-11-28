@@ -5,7 +5,7 @@ import java.io.IOException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import static org.bobocode.hoverla.bring.web.servlet.converter.ContentType.TEXT_PLAIN;
 import static org.bobocode.hoverla.bring.web.util.TypeUtils.isTextPlainType;
@@ -14,7 +14,7 @@ import static org.bobocode.hoverla.bring.web.util.TypeUtils.isTextPlainType;
  * Message converter for plain text responses. It converts the response body into a plain text string and
  * sets the Content-Type header to "text/plain".
  */
-@Log4j2
+@Slf4j
 public class TextPlainHttpMessageConverter implements HttpMessageConverter {
 
   @Override
