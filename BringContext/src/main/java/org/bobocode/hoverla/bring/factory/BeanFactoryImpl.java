@@ -52,7 +52,7 @@ public class BeanFactoryImpl implements BeanFactory {
     if (BeanScope.SINGLETON.equals(beanDefinition.getScope())) {
       return tryToInitializeSingletonBean(beanName);
     }
-    throw new BeanCreationException("Scope: " + beanDefinition.getScope() + "is not supported");
+    throw new BeanCreationException("Scope: " + beanDefinition.getScope() + " is not supported");
   }
 
   /**
@@ -70,8 +70,9 @@ public class BeanFactoryImpl implements BeanFactory {
       throw new BeanCreationException("Error happened during crete of bean with name: " + beanName, e);
     }
     log.debug("Started post processing for bean with name {}", beanName);
-    beanPostProcessors.forEach(bpp -> bpp.postProcessBeforeInitialization(createdBean, beanName));
-    beanPostProcessors.forEach(bpp -> bpp.postProcessAfterInitialization(createdBean, beanName));
+    for (BeanPostProcessor bpp : beanPostProcessors) {
+      createdBean = bpp.postProcessBean(createdBean, beanName);
+    }
     log.debug("Post processing for bean with name {} finished", beanName);
     beans.put(beanName, createdBean);
     return createdBean;

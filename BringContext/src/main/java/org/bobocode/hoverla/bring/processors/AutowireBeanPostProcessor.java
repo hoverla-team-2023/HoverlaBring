@@ -1,7 +1,6 @@
 package org.bobocode.hoverla.bring.processors;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,25 +21,24 @@ public class AutowireBeanPostProcessor implements BeanPostProcessor {
     this.beanFactory = beanFactory;
   }
 
-  //todo if we decide to have some proxy for beam in init() method use this for saving original bean or bean class, else remove this method and rename postProcessAfterInitialization to postProcessBean
-  @Override
-  public Object postProcessBeforeInitialization(Object bean, String beanName) {
-    return bean;
-  }
-
   /**
    * This method will inject all required dependency to bean and return it
    * Please note, this method will inject fields by interface too:
    * Example we have class UserServiceImpl that implements UserService, you can inject it by two ways @Autowired private UserService userService
    * and @Autowired private UserServiceImpl userService;
    * But at the moment if u have 2 classes that is marked as @Component and you try to autowire by UserService excption will be throw
-   * @param bean object to inject
+   *
+   * @param bean     object to inject
    * @param beanName keyword used to find bean in BeanFactory
+   *
    * @return updated bean
    */
   @Override
-  public Object postProcessAfterInitialization(Object bean, String beanName) {
+  public Object postProcessBean(Object bean, String beanName) {
     BeanDefinition beanDefinitionByBeanName = beanFactory.getBeanDefinitionByBeanName(beanName);
+    if (beanDefinitionByBeanName == null) {
+      throw new BeanInjectionException("Failed to inject dependency for bean with name" + beanName + " bean definition exists");
+    }
     Class<?> targetClass = beanDefinitionByBeanName.getTargetClass();
     if (targetClass.getDeclaredFields().length > 0) {
       for (Field field : targetClass.getDeclaredFields()) {
@@ -54,18 +52,21 @@ public class AutowireBeanPostProcessor implements BeanPostProcessor {
     return bean;
   }
 
-  private void injectDependency(Object bean, String beanName, BeanDefinition beanDefinitionByBeanName, Field field) {
+  void injectDependency(Object bean, String beanName, BeanDefinition beanDefinitionByBeanName, Field field) {
     BeanDefinition candidate = defineRequiredBeanBeanDefinition(beanDefinitionByBeanName, field);
     Object beanToInject = beanFactory.getBean(candidate.getBeanName());
-    field.setAccessible(true);
+    if (beanToInject == null) {
+      throw new BeanInjectionException("Failed to inject field " + field.getName() + " to bean " + beanName + ". Candidate object " + bean + " no required bean to inject found");
+    }
     try {
+      field.setAccessible(true);
       ReflectionUtil.setFieldValue(field, bean, beanToInject);
     } catch (IllegalArgumentException e) {
       throw new BeanInjectionException("Failed to inject field " + field.getName() + " to bean " + beanName + ". Candidate object " + bean, e);
     }
   }
 
-  private BeanDefinition defineRequiredBeanBeanDefinition(BeanDefinition beanDefinition, Field injectionCandidate) {
+  BeanDefinition defineRequiredBeanBeanDefinition(BeanDefinition beanDefinition, Field injectionCandidate) {
     Collection<BeanDefinition> existedBeamDefinitions = beanFactory.getRegisteredBeanDefinitions();
     if (existedBeamDefinitions == null || existedBeamDefinitions.isEmpty()) {
       throw new BeanInjectionException("No bean definitions found ");
