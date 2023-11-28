@@ -24,6 +24,8 @@ import org.bobocode.hoverla.bring.web.servlet.processor.TextPlainReturnValueProc
 import org.bobocode.hoverla.bring.web.servlet.resolver.HandlerMethodArgumentResolver;
 import org.bobocode.hoverla.bring.web.servlet.resolver.PathVariableArgumentResolver;
 import org.bobocode.hoverla.bring.web.servlet.resolver.QueryParamArgumentResolver;
+import org.bobocode.hoverla.bring.web.servlet.resolver.RequestBodyMethodArgumentResolver;
+import org.bobocode.hoverla.bring.web.servlet.resolver.RequestEntityMethodArgumentResolver;
 import org.bobocode.hoverla.bring.web.servlet.resolver.ServletArgumentResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,8 +56,10 @@ public class DispatcherServlet extends HttpServlet {
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
     // todo add logs
-    List<HttpMessageConverter> converters = List.of(new TextPlainHttpMessageConverter(),
-                                                    new JsonHttpMessageConverter(new ObjectMapper()));
+    var objectMapper = new ObjectMapper();
+
+    List<HttpMessageConverter> converters = List.of(new TextPlainHttpMessageConverter(objectMapper),
+                                                    new JsonHttpMessageConverter(objectMapper));
 
     this.returnValueProcessors = List.of(new PojoReturnValueProcessor(converters),
                                          new ResponseEntityReturnValueProcessor(converters),
@@ -63,7 +67,9 @@ public class DispatcherServlet extends HttpServlet {
 
     this.argumentResolvers = List.of(new QueryParamArgumentResolver(),
                                      new ServletArgumentResolver(),
-                                     new PathVariableArgumentResolver());
+                                     new PathVariableArgumentResolver(),
+                                     new RequestBodyMethodArgumentResolver(converters),
+                                     new RequestEntityMethodArgumentResolver(converters));
     this.handlerMappings = List.of(new AnnotationBasedHandlerMapping(controllers)); // Need to provide Controllers what will be initialized and scanned
   }
 
