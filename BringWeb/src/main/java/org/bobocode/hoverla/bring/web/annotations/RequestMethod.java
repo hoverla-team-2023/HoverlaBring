@@ -10,7 +10,7 @@ public enum RequestMethod {
   POST,
   PUT,
   DELETE,
-  PATH,
+  PATCH,
   TRACE,
   OPTIONS
 }

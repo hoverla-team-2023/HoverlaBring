@@ -22,6 +22,7 @@ import org.bobocode.hoverla.bring.web.servlet.processor.ResponseEntityReturnValu
 import org.bobocode.hoverla.bring.web.servlet.processor.ReturnValueProcessor;
 import org.bobocode.hoverla.bring.web.servlet.processor.TextPlainReturnValueProcessor;
 import org.bobocode.hoverla.bring.web.servlet.resolver.HandlerMethodArgumentResolver;
+import org.bobocode.hoverla.bring.web.servlet.resolver.PathVariableArgumentResolver;
 import org.bobocode.hoverla.bring.web.servlet.resolver.QueryParamArgumentResolver;
 import org.bobocode.hoverla.bring.web.servlet.resolver.ServletArgumentResolver;
 
@@ -30,11 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Basic {@link HttpServlet} implementation
- * DispatcherServlet handles incoming requests, processes them,
- * and dispatches them to appropriate handler methods.
- */
 @Slf4j
 @RequiredArgsConstructor
 public class DispatcherServlet extends HttpServlet {
@@ -66,13 +62,52 @@ public class DispatcherServlet extends HttpServlet {
                                          new TextPlainReturnValueProcessor(converters));
 
     this.argumentResolvers = List.of(new QueryParamArgumentResolver(),
-                                     new ServletArgumentResolver());
+                                     new ServletArgumentResolver(),
+                                     new PathVariableArgumentResolver());
     this.handlerMappings = List.of(new AnnotationBasedHandlerMapping(controllers)); // Need to provide Controllers what will be initialized and scanned
   }
 
-  //todo add doPost...
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    processRequest(req, resp);
+  }
+
+  @Override
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    processRequest(req, resp);
+  }
+  @Override
+  protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    processRequest(req, resp);
+  }
+
+  @Override
+  protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    processRequest(req, resp);
+  }
+  @Override
+  protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    processRequest(req, resp);
+  }
+  @Override
+  protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    String method = req.getMethod();
+    if (method.equals("PATCH")) {
+      doPatch(req, resp);
+    } else {
+      super.service(req, resp);
+    }
+  }
+  protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+  }
+  @Override
+  protected void doTrace(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    processRequest(req, resp);
+  }
+
+  @Override
+  protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     processRequest(req, resp);
   }
 
@@ -135,7 +170,7 @@ public class DispatcherServlet extends HttpServlet {
     return Arrays.stream(handlerMethod.getParameters())
       .flatMap(parameter -> argumentResolvers.stream()
         .filter(resolver -> resolver.supportsParameter(parameter))
-        .map(resolver -> resolver.resolveArgument(parameter, request, response)))
+        .map(resolver -> resolver.resolveArgument(handlerMethod, parameter, request, response)))
       .toList()
       .toArray();
   }

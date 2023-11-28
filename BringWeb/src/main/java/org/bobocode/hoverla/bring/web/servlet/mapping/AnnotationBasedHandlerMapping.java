@@ -7,6 +7,7 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.bobocode.hoverla.bring.web.annotations.RequestMapping;
+import org.bobocode.hoverla.bring.web.annotations.RequestMethod;
 import org.bobocode.hoverla.bring.web.servlet.handler.AntPathMatcher;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 
@@ -42,7 +43,9 @@ public class AnnotationBasedHandlerMapping implements HandlerMapping {
         if (method.isAnnotationPresent(RequestMapping.class)) {
           RequestMapping mapping = method.getAnnotation(RequestMapping.class);
           String path = mapping.path();
-          handlerMethods.put(path, new HandlerMethod(controller.getClass(), method, path, method.getParameters(), controller));
+          RequestMethod requestMethod = mapping.method();
+          handlerMethods.put(path + ":" + requestMethod.name(),
+                             new HandlerMethod(controller.getClass(), method, path, method.getParameters(), controller, requestMethod));
         }
       }
     }
@@ -60,9 +63,10 @@ public class AnnotationBasedHandlerMapping implements HandlerMapping {
   @Override
   public HandlerMethod getHandlerMethod(HttpServletRequest request) {
     String requestPath = request.getRequestURI();
+    RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
     for (Map.Entry<String, HandlerMethod> entry : handlerMethods.entrySet()) {
       HandlerMethod handlerMethod = entry.getValue();
-      if (pathMatcher.match(handlerMethod.getPath(), requestPath)) {
+      if (pathMatcher.match(handlerMethod.getPath(), requestPath) && requestMethod.name().equals(handlerMethod.getRequestMethod().name())) {
         return handlerMethod;
       }
     }
