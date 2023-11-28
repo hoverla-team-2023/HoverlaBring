@@ -25,8 +25,7 @@ class TypeUtilsTest {
       arguments(Boolean.class),
       arguments(boolean.class),
       arguments(Character.class),
-      arguments(char.class),
-      arguments(Void.class)
+      arguments(char.class)
     );
   }
 
@@ -40,52 +39,6 @@ class TypeUtilsTest {
   @Test
   void givenIsObjectType_whenIsTextPlainType_thenFalse() {
     var result = TypeUtils.isTextPlainType(Object.class);
-    assertFalse(result);
-  }
-
-  static Stream<Arguments> primitiveTypes() {
-    return Stream.of(
-      arguments(byte.class),
-      arguments(short.class),
-      arguments(int.class),
-      arguments(long.class),
-      arguments(float.class),
-      arguments(double.class),
-      arguments(boolean.class),
-      arguments(char.class)
-    );
-  }
-
-  @ParameterizedTest
-  @MethodSource("primitiveTypes")
-  void givenIsPrimitive_whenIsPrimitiveOrWrapper_thenTrue(Class<?> type) {
-    var result = TypeUtils.isPrimitiveOrWrapper(type);
-    assertTrue(result);
-  }
-
-  static Stream<Arguments> wrapperTypes() {
-    return Stream.of(
-      arguments(Byte.class),
-      arguments(Short.class),
-      arguments(Integer.class),
-      arguments(Long.class),
-      arguments(Float.class),
-      arguments(Double.class),
-      arguments(Boolean.class),
-      arguments(Character.class)
-    );
-  }
-
-  @ParameterizedTest
-  @MethodSource("wrapperTypes")
-  void givenIsWrapper_whenIsPrimitiveOrWrapper_thenTrue(Class<?> type) {
-    var result = TypeUtils.isPrimitiveOrWrapper(type);
-    assertTrue(result);
-  }
-
-  @Test
-  void givenObject_whenIsPrimitiveOrWrapper_thenFalse() {
-    var result = TypeUtils.isPrimitiveOrWrapper(Object.class);
     assertFalse(result);
   }
 

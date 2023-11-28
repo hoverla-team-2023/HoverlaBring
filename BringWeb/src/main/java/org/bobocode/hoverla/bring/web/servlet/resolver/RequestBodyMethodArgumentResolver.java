@@ -1,28 +1,28 @@
 package org.bobocode.hoverla.bring.web.servlet.resolver;
 
-import java.io.IOException;
 import java.lang.reflect.Parameter;
+import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.bobocode.hoverla.bring.web.annotations.RequestBody;
+import org.bobocode.hoverla.bring.web.exceptions.InvalidContentTypeException;
+import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import static org.bobocode.hoverla.bring.web.servlet.converter.ContentType.APPLICATION_JSON;
 
 /**
- * Handles {@link RequestBody}
+ * {@link HandlerMethodArgumentResolver} that handles {@link RequestBody} parameters. Only <code>Content-Type: application/json</code> is supported.
  */
 @Log4j2
-@RequiredArgsConstructor
-public class RequestBodyMethodArgumentResolver implements HandlerMethodArgumentResolver {
+public class RequestBodyMethodArgumentResolver extends DelegatingHttpMessageConverterArgumentResolver {
 
-  private final ObjectMapper objectMapper;
+  public RequestBodyMethodArgumentResolver(List<HttpMessageConverter> messageConverters) {
+    super(messageConverters);
+  }
 
   @Override
   public boolean supportsParameter(Parameter parameter) {
@@ -31,28 +31,21 @@ public class RequestBodyMethodArgumentResolver implements HandlerMethodArgumentR
 
   @Override
   public Object resolveArgument(Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
-    verifyContentType(request);
+    var contentType = request.getContentType();
+    verifyContentType(contentType);
 
-    var type = parameter.getType();
-    try {
-      return objectMapper.readValue(request.getReader(), type);
-    } catch (IOException e) {
-      var message = "Failed to convert the request body to the required type %s".formatted(type.getSimpleName());
-      log.error(message, e);
+    var type = parameter.getParameterizedType();
+    log.debug("Converting request body to {}", type.getTypeName());
 
-      // TODO: 23.11.2023 throw a dedicated exception and log it (ObjectDeserializationException)
-      throw new RuntimeException(message, e);
-    }
+    return readRequestBody(type, request, contentType);
   }
 
-  private void verifyContentType(HttpServletRequest request) {
-    var contentType = request.getContentType();
+  private void verifyContentType(String contentType) {
     if (!APPLICATION_JSON.getValue().equals(contentType)) {
       var message = "Unsupported content type: %s. Only %s is supported.".formatted(contentType, APPLICATION_JSON.getValue());
-      log.error(message);
 
-      // TODO: 23.11.2023 throw a dedicated exception and log it
-      throw new RuntimeException(message);
+      log.error(message);
+      throw new InvalidContentTypeException(message);
     }
   }
 

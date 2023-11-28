@@ -1,6 +1,7 @@
 package org.bobocode.hoverla.bring.web.servlet.converter;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,9 +15,9 @@ public interface HttpMessageConverter {
 
   void write(Object value, HttpServletResponse response, String contentType) throws IOException;
 
-  boolean canRead(Class<?> type, String contentType);
+  boolean canRead(Type type, String contentType);
 
-  Object read(Class<?> type, HttpServletRequest request, String contentType) throws IOException;
+  Object read(Type type, HttpServletRequest request, String contentType) throws IOException;
 
   boolean isSupportedContentType(String contentType);
 

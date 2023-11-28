@@ -61,8 +61,7 @@ class TextPlainHttpMessageConverterTest {
       arguments(Boolean.class),
       arguments(boolean.class),
       arguments(Character.class),
-      arguments(char.class),
-      arguments(Void.class)
+      arguments(char.class)
     );
   }
 

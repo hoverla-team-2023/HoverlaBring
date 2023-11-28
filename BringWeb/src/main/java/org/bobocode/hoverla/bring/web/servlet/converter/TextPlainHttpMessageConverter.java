@@ -1,6 +1,7 @@
 package org.bobocode.hoverla.bring.web.servlet.converter;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,13 +44,13 @@ public class TextPlainHttpMessageConverter implements HttpMessageConverter {
   }
 
   @Override
-  public boolean canRead(Class<?> type, String contentType) {
+  public boolean canRead(Type type, String contentType) {
     return isSupportedContentType(contentType) || isTextPlainType(type);
   }
 
   @Override
-  public Object read(Class<?> type, HttpServletRequest request, String contentType) throws IOException {
-    return objectMapper.readValue(request.getInputStream(), type);
+  public Object read(Type type, HttpServletRequest request, String contentType) throws IOException {
+    return objectMapper.readValue(request.getInputStream(), objectMapper.constructType(type));
   }
 
   @Override

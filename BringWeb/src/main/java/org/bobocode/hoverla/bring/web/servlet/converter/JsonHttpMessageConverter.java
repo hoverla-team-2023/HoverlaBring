@@ -1,6 +1,7 @@
 package org.bobocode.hoverla.bring.web.servlet.converter;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -58,18 +59,17 @@ public class JsonHttpMessageConverter implements HttpMessageConverter {
   }
 
   @Override
-  public boolean canRead(Class<?> type, String contentType) {
+  public boolean canRead(Type type, String contentType) {
     return isSupportedContentType(contentType) || canRead(type);
   }
 
-  private boolean canRead(Class<?> type) {
+  private boolean canRead(Type type) {
     return !isTextPlainType(type) && objectMapper.canDeserialize(objectMapper.constructType(type));
   }
 
-  // TODO: 22.11.2023. not used for now. needs to be implemented further when it's used
   @Override
-  public Object read(Class<?> type, HttpServletRequest request, String contentType) throws IOException {
-    return objectMapper.readValue(request.getReader(), type);
+  public Object read(Type type, HttpServletRequest request, String contentType) throws IOException {
+    return objectMapper.readValue(request.getInputStream(), objectMapper.constructType(type));
   }
 
   @Override
