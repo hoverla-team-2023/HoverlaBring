@@ -1,10 +1,9 @@
 package org.bobocode.hoverla.bring.web.initializers;
 
 import jakarta.servlet.ServletContext;
-
-import org.bobocode.hoverla.bring.web.servlet.DispatcherServlet;
-
 import lombok.extern.slf4j.Slf4j;
+import org.bobocode.hoverla.bring.context.HoverlaApplicationContext;
+import org.bobocode.hoverla.bring.web.servlet.DispatcherServlet;
 
 /**
  * Basic {@link ServletInitializer} implementation. This initializer allows developers to easily register a {@link DispatcherServlet} in the servlet container
@@ -20,23 +19,21 @@ public abstract class AbstractDispatcherServletInitializer implements ServletIni
    */
   @Override
   public void onStartup(ServletContext servletContext) {
-    var servlet = new DispatcherServlet(servletContext, controllers(), controllerAdvices());
+    var servlet = new DispatcherServlet(servletContext, new HoverlaApplicationContext(getPackagesToScan()));
     var registration = servletContext.addServlet("dispatcher", servlet);
     registration.setLoadOnStartup(1);
     registration.setAsyncSupported(true);
-    registration.addMapping(getServletMapping());
+    registration.addMapping("/");
 
     log.info("DispatcherServlet initialized");
   }
 
   /**
-   * Provide the mapping URL for the dispatcher servlet.
+   * Get the base packages to be scanned for component classes.
    *
-   * @return mapping URL
+   * @return the base packages to be scanned.
    */
-  protected abstract String getServletMapping();
-  //todo temporary
-  protected abstract Object[] controllers();
-  protected abstract Object[] controllerAdvices();
+  protected abstract String getPackagesToScan();
+
 
 }

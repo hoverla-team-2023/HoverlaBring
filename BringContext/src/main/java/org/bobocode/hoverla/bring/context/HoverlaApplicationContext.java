@@ -1,14 +1,13 @@
 package org.bobocode.hoverla.bring.context;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-
+import lombok.extern.slf4j.Slf4j;
 import org.bobocode.hoverla.bring.annotations.Component;
 import org.bobocode.hoverla.bring.factory.BeanFactory;
 import org.bobocode.hoverla.bring.factory.BeanFactoryImpl;
 import org.bobocode.hoverla.bring.processors.AutowireBeanPostProcessor;
 
-import lombok.extern.slf4j.Slf4j;
+import java.lang.annotation.Annotation;
+import java.util.Set;
 
 /**
  * Main class of Bring Context application, responsible for manage of all main process in this app
@@ -34,9 +33,18 @@ public class HoverlaApplicationContext implements ApplicationContext {
     init();
     log.debug("Context initialization finished successfully, starting package scanning");
     beanDefinitionScanner.loadBeanDefinitions(path);
+    this.doProcessBeans();
     log.info("Scanning components finished successfully");
-    doProcessBeans();
-    log.info("Bean processing finished successfully, app is ready to use");
+  }
+
+  /**
+   * Get the BeanFactory associated with this object.
+   *
+   * @return BeanFactory instance used by this object.
+   */
+  @Override
+  public BeanFactory getBeanFactory() {
+    return beanFactory;
   }
 
   /**
@@ -52,7 +60,7 @@ public class HoverlaApplicationContext implements ApplicationContext {
    * This method is responsible for initialization of BeanFactory and add defaults BeanPostProcessors
    */
   private BeanFactory initBeanFactory() {
-    log.debug("BeanFactorу initializing started");
+    log.debug("BeanFactory initializing started");
     BeanFactoryImpl beanFactoryImpl = new BeanFactoryImpl();
     beanFactoryImpl.addBeanPostProcessor(new AutowireBeanPostProcessor(beanFactoryImpl));
     beanFactoryImpl.setBeanDefinitionRegistry(beanDefinitionRegistry);
@@ -67,10 +75,4 @@ public class HoverlaApplicationContext implements ApplicationContext {
       log.debug("Processing bean with name {} finished", beanDefinitionName);
     }
   }
-
-  @Override
-  public BeanFactory getBeanFactory() {
-    return beanFactory;
-  }
-
 }

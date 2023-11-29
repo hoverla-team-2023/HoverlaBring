@@ -22,5 +22,4 @@ public interface ServletInitializer {
    */
   void onStartup(ServletContext servletContext);
 
-  String getPackagesToScan();
 }

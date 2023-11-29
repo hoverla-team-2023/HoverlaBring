@@ -8,7 +8,7 @@ import org.bobocode.hoverla.demo.HoverlaException;
 @Controller
 public class HoverlaController {
 
-  @RequestMapping(path = "/hoverla", method = RequestMethod.GET)
+  @RequestMapping(path = "/", method = RequestMethod.GET)
   public String hello() {
     throw new HoverlaException("message");
   }
