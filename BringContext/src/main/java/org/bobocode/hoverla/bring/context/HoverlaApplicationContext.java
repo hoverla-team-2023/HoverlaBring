@@ -52,6 +52,7 @@ public class HoverlaApplicationContext implements ApplicationContext {
    * This method is responsible for initialization of BeanFactory and add defaults BeanPostProcessors
    */
   private BeanFactory initBeanFactory() {
+    log.debug("BeanFactorу initializing started");
     BeanFactoryImpl beanFactoryImpl = new BeanFactoryImpl();
     beanFactoryImpl.addBeanPostProcessor(new AutowireBeanPostProcessor(beanFactoryImpl));
     beanFactoryImpl.setBeanDefinitionRegistry(beanDefinitionRegistry);
