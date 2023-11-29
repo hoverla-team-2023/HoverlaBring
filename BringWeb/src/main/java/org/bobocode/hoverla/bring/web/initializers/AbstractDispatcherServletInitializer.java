@@ -20,7 +20,7 @@ public abstract class AbstractDispatcherServletInitializer implements ServletIni
    */
   @Override
   public void onStartup(ServletContext servletContext) {
-    var servlet = new DispatcherServlet(servletContext, controllers());
+    var servlet = new DispatcherServlet(servletContext, controllers(), controllerAdvices());
     var registration = servletContext.addServlet("dispatcher", servlet);
     registration.setLoadOnStartup(1);
     registration.setAsyncSupported(true);
@@ -37,5 +37,6 @@ public abstract class AbstractDispatcherServletInitializer implements ServletIni
   protected abstract String getServletMapping();
   //todo temporary
   protected abstract Object[] controllers();
+  protected abstract Object[] controllerAdvices();
 
 }

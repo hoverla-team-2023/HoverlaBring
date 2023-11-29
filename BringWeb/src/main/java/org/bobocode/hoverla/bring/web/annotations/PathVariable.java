@@ -12,13 +12,15 @@ import org.bobocode.hoverla.bring.web.servlet.resolver.PathVariableArgumentResol
  * the path variables of an HTTP request.
  *
  * <p>Methods annotated with this can have parameters annotated with
- * {@code @PathVariable} to specify the name of the path variable to be used for
+ * {@code @QueryParam} to specify the name of the query parameter to be used for
  * resolving the parameter value.
  *
  * <p>Example:
  * <pre>
  * {@code
- * public void exampleMethod(@PathVariable("variableName") String variableValue) {
+ * @RequestMapping("/api/{paramName}")
+ * public void exampleMethod(@PathVariable("paramName") String paramValue) {
+ *     // Method logic
  * }
  * }
  * </pre>
@@ -28,7 +30,6 @@ import org.bobocode.hoverla.bring.web.servlet.resolver.PathVariableArgumentResol
  *
  * @see PathVariableArgumentResolver
  */
-
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PathVariable {

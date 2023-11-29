@@ -120,7 +120,7 @@ public class QueryParamArgumentResolver implements HandlerMethodArgumentResolver
     try {
       return mapper.readValue(values, mapper.getTypeFactory().constructType(parameter.getParameterizedType()));
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new ObjectDeserializationException("Unable to resolve collection query param %s".formatted(values), e);
     }
 
   }

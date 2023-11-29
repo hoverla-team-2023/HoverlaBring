@@ -6,7 +6,7 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.bobocode.hoverla.bring.web.annotations.RequestBody;
-import org.bobocode.hoverla.bring.web.exceptions.InvalidContentTypeException;
+import org.bobocode.hoverla.bring.web.exceptions.UnsupportedContentTypeException;
 import org.bobocode.hoverla.bring.web.exceptions.MessageConverterNotFoundException;
 import org.bobocode.hoverla.bring.web.exceptions.ObjectDeserializationException;
 import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
@@ -117,7 +117,7 @@ class RequestBodyMethodArgumentResolverTest {
   void givenNoContentType_whenResolveArgument_thenThrowInvalidContentTypeException(@Mock HttpServletRequest request) throws NoSuchMethodException {
     var parameter = getClass().getDeclaredMethod("mockMethod", List.class).getParameters()[0];
 
-    assertThrows(InvalidContentTypeException.class, () -> instance.resolveArgument(null, parameter, request, null));
+    assertThrows(UnsupportedContentTypeException.class, () -> instance.resolveArgument(null, parameter, request, null));
 
     verifyNoInteractions(messageConverter);
   }

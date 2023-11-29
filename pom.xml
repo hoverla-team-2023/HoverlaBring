@@ -40,6 +40,7 @@
     <jackson.version>2.16.0</jackson.version>
     <slf4j-api.version>2.0.9</slf4j-api.version>
     <log4j-slf4j2-impl.version>2.19.0</log4j-slf4j2-impl.version>
+    <approvaltests.version>10.0.0</approvaltests.version>
   </properties>
 
   <dependencyManagement>
@@ -140,6 +141,11 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>${commons-lang3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.approvaltests</groupId>
+      <artifactId>approvaltests</artifactId>
+      <version>${approvaltests.version}</version>
     </dependency>
   </dependencies>
 
