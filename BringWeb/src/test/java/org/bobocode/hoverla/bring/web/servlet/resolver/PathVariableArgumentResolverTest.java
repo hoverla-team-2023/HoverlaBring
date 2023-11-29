@@ -1,6 +1,7 @@
 package org.bobocode.hoverla.bring.web.servlet.resolver;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,28 +9,35 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.bobocode.hoverla.bring.web.annotations.PathVariable;
 import org.bobocode.hoverla.bring.web.annotations.RequestMapping;
 import org.bobocode.hoverla.bring.web.annotations.RequestMethod;
+import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(MockitoExtension.class)
-class PathVariableArgumentResolverTest {
+public class PathVariableArgumentResolverTest {
 
-  @Mock
+  private PathVariableArgumentResolver resolver;
   private HttpServletRequest request;
-
-  @Mock
   private HttpServletResponse response;
+  private HandlerMethod handlerMethod;
 
-  PathVariableArgumentResolver resolver = new PathVariableArgumentResolver();
+  @BeforeEach
+  public void setUp() {
+    resolver = new PathVariableArgumentResolver();
+    request = mock(HttpServletRequest.class);
+    response = mock(HttpServletResponse.class);
+    handlerMethod = mock(HandlerMethod.class);
+  }
 
   @Test
   void supportsParameter() throws NoSuchMethodException {
@@ -50,52 +58,41 @@ class PathVariableArgumentResolverTest {
     assertTrue(resolver.supportsParameter(exampleMethod.getParameters()[1]));
   }
 
-  // @Test todo fix test
-  void resolveArgument() {
-    Mockito.when(request.getParameter("stringValue")).thenReturn("TestString");
-    Mockito.when(request.getParameter("longValue")).thenReturn("123");
-    Mockito.when(request.getParameter("enumValue")).thenReturn("VALUE1");
+  @Test
+  public void supportsParameterShouldReturnTrueForAnnotatedParameter() throws NoSuchMethodException {
+    Method stringPathVariableMethod = TestController.class.getMethod("stringPathVariableMethod", String.class);
+    Parameter annotatedParameter = stringPathVariableMethod.getParameters()[0];
 
-    Method stringPathVariableMethod;
-    try {
-      stringPathVariableMethod = TestController.class.getMethod("stringPathVariableMethod", String.class);
-    } catch (NoSuchMethodException e) {
-      throw new RuntimeException(e);
-    }
-    Method longPathVariableMethod;
-    try {
-      longPathVariableMethod = TestController.class.getMethod("longPathVariableMethod", Long.class);
-    } catch (NoSuchMethodException e) {
-      throw new RuntimeException(e);
-    }
-    Method enumPathVariableMethod;
-    try {
-      enumPathVariableMethod = TestController.class.getMethod("enumPathVariableMethod", TestEnum.class);
-    } catch (NoSuchMethodException e) {
-      throw new RuntimeException(e);
-    }
+    boolean result = resolver.supportsParameter(annotatedParameter);
 
-    assertEquals("TestString", resolver.resolveArgument(null, stringPathVariableMethod.getParameters()[0], request, response));
-    assertEquals(123L, resolver.resolveArgument(null, longPathVariableMethod.getParameters()[0], request, response));
-    assertEquals(TestEnum.VALUE1, resolver.resolveArgument(null, enumPathVariableMethod.getParameters()[0], request, response));
-
+    assertTrue(result);
   }
 
-  // @Test todo fix test
-  void resolveArgument_multiplePathVariables() {
+  @Test
+  public void resolveArgumentShouldReturnProperlyParsedValue() throws NoSuchMethodException {
+    Method method = TestController.class.getMethod("method", String.class);
+    Parameter annotatedParameter = method.getParameters()[0];
 
-    Mockito.when(request.getParameter("conversationId")).thenReturn("TestString");
-    Mockito.when(request.getParameter("noteId")).thenReturn("123");
+    when(handlerMethod.getPath()).thenReturn("/example/{id}/test");
+    when(request.getRequestURI()).thenReturn("/example/123/test");
 
-    Method exampleMethod;
-    try {
-      exampleMethod = TestController.class.getMethod("exampleMethod", String.class, Long.class);
-    } catch (NoSuchMethodException e) {
-      throw new RuntimeException(e);
-    }
+    String result = (String) resolver.resolveArgument(handlerMethod, annotatedParameter, request, response);
 
-    assertEquals("TestString", resolver.resolveArgument(null, exampleMethod.getParameters()[0], request, response));
-    assertEquals(123L, resolver.resolveArgument(null, exampleMethod.getParameters()[1], request, response));
+    assertEquals("123", result);
+  }
+
+  @Test
+  void resolveArgument_multiplePathVariables() throws NoSuchMethodException {
+    Method exampleMethod = TestController.class.getMethod("exampleMethod", String.class, Long.class);
+
+    when(handlerMethod.getPath()).thenReturn("/conversations/{conversationId}/notes/{noteId}");
+    when(request.getRequestURI()).thenReturn("/conversations/123/notes/456");
+
+    String conversationIdResult = (String) resolver.resolveArgument(handlerMethod, exampleMethod.getParameters()[0], request, response);
+    Long noteIdResult = (Long) resolver.resolveArgument(handlerMethod, exampleMethod.getParameters()[1], request, response);
+
+    assertEquals("123", conversationIdResult);
+    assertEquals(456L, noteIdResult);
   }
 
   enum TestEnum {
@@ -118,6 +115,10 @@ class PathVariableArgumentResolverTest {
     @RequestMapping(path = "/test/{enumValue}", method = RequestMethod.PUT)
     public void enumPathVariableMethod(@PathVariable("enumValue") TestEnum enumValue) {
 
+    }
+
+    @RequestMapping(path = "/example/{id}/test", method = RequestMethod.GET)
+    public void method(@PathVariable("id") String id) {
     }
 
     @RequestMapping(path = "/conversations/{conversationId}/notes/{noteId}", method = RequestMethod.POST)
