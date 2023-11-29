@@ -26,7 +26,7 @@ class BeanDefinitionScannerTest {
   void testLoadBeanDefinitionsFindsInnerComponent() {
     var expected = BeanDefinition.of(TestService.class.getSimpleName(), TestService.class, BeanScope.SINGLETON);
 
-    String basePackage = "org.bobocode.hoverla";
+    String basePackage = "org.bobocode.hoverla.bring.context";
 
     List<BeanDefinition> beanDefinitions = scanner.loadBeanDefinitions(basePackage);
 

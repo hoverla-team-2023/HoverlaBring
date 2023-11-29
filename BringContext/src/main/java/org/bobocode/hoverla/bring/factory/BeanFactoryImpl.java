@@ -2,6 +2,7 @@ package org.bobocode.hoverla.bring.factory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class BeanFactoryImpl implements BeanFactory {
     if (BeanScope.SINGLETON.equals(beanDefinition.getScope())) {
       return tryToInitializeSingletonBean(beanName);
     }
-    throw new BeanCreationException("Scope: " + beanDefinition.getScope() + "is not supported");
+    throw new BeanCreationException("Scope: " + beanDefinition.getScope() + " is not supported");
   }
 
   /**
@@ -68,11 +69,12 @@ public class BeanFactoryImpl implements BeanFactory {
     } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
       throw new BeanCreationException("Error happened during crete of bean with name: " + beanName, e);
     }
-    beans.put(beanName, createdBean);
     log.debug("Started post processing for bean with name {}", beanName);
-    beanPostProcessors.forEach(bpp -> bpp.postProcessBeforeInitialization(createdBean, beanName));
-    beanPostProcessors.forEach(bpp -> bpp.postProcessAfterInitialization(createdBean, beanName));
+    for (BeanPostProcessor bpp : beanPostProcessors) {
+      createdBean = bpp.postProcessBean(createdBean, beanName);
+    }
     log.debug("Post processing for bean with name {} finished", beanName);
+    beans.put(beanName, createdBean);
     return createdBean;
   }
 
@@ -129,6 +131,14 @@ public class BeanFactoryImpl implements BeanFactory {
       log.warn("Can't find BeanDefinition with name {}", beanName);
     }
     return beanDefinition;
+  }
+
+  /**
+   * this method will return all registered bean definition
+   */
+  @Override
+  public Collection<BeanDefinition> getRegisteredBeanDefinitions() {
+    return beanDefinitionRegistry.getAllBeanDefinitions();
   }
 
 }
