@@ -1,6 +1,7 @@
 package org.bobocode.hoverla.bring.web.servlet;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,6 +12,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.bobocode.hoverla.bring.web.exceptions.GlobalControllerAdvice;
+import org.bobocode.hoverla.bring.web.exceptions.NotFoundException;
+import org.bobocode.hoverla.bring.web.exceptions.resolvers.AnnotationBasedHandlerExceptionResolver;
+import org.bobocode.hoverla.bring.web.exceptions.resolvers.HandlerExceptionResolver;
 import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.converter.JsonHttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.converter.TextPlainHttpMessageConverter;
@@ -31,9 +37,16 @@ import org.bobocode.hoverla.bring.web.servlet.resolver.ServletArgumentResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Basic {@link HttpServlet} implementation
+ * DispatcherServlet handles incoming requests, processes them,
+ * and dispatches them to appropriate handler methods.
+ */
 @Slf4j
+@Setter
 @RequiredArgsConstructor
 public class DispatcherServlet extends HttpServlet {
 
@@ -42,8 +55,11 @@ public class DispatcherServlet extends HttpServlet {
   private List<ReturnValueProcessor> returnValueProcessors;
   private List<HandlerMethodArgumentResolver> argumentResolvers;
   private List<HandlerMapping> handlerMappings;
+  private List<HandlerExceptionResolver> exceptionResolvers;
 
   private final Object[] controllers;
+
+  private final Object[] controllerAdvices;
 
   /**
    * Initializes the servlet with the given configuration.
@@ -55,11 +71,13 @@ public class DispatcherServlet extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    // todo add logs
+
+    log.info("Initializing DispatcherServlet...");
     var objectMapper = new ObjectMapper();
 
     List<HttpMessageConverter> converters = List.of(new TextPlainHttpMessageConverter(objectMapper),
-                                                    new JsonHttpMessageConverter(objectMapper));
+                                                    new JsonHttpMessageConverter(objectMapper),
+                                                 new JsonHttpMessageConverter(new ObjectMapper()));
 
     this.returnValueProcessors = List.of(new PojoReturnValueProcessor(converters),
                                          new ResponseEntityReturnValueProcessor(converters),
@@ -70,7 +88,11 @@ public class DispatcherServlet extends HttpServlet {
                                      new PathVariableArgumentResolver(),
                                      new RequestBodyMethodArgumentResolver(converters),
                                      new RequestEntityMethodArgumentResolver(converters));
+
     this.handlerMappings = List.of(new AnnotationBasedHandlerMapping(controllers)); // Need to provide Controllers what will be initialized and scanned
+    this.exceptionResolvers = List.of(
+      new AnnotationBasedHandlerExceptionResolver(ArrayUtils.addAll(new Object[] { new GlobalControllerAdvice() },
+                                                                    controllerAdvices))); // Need to provide Controllers what will be initialized and scanned
   }
 
   @Override
@@ -82,6 +104,7 @@ public class DispatcherServlet extends HttpServlet {
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     processRequest(req, resp);
   }
+
   @Override
   protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     processRequest(req, resp);
@@ -91,22 +114,12 @@ public class DispatcherServlet extends HttpServlet {
   protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     processRequest(req, resp);
   }
+
   @Override
   protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     processRequest(req, resp);
   }
-  @Override
-  protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    String method = req.getMethod();
-    if (method.equals("PATCH")) {
-      doPatch(req, resp);
-    } else {
-      super.service(req, resp);
-    }
-  }
-  protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-  }
   @Override
   protected void doTrace(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     processRequest(req, resp);
@@ -126,23 +139,51 @@ public class DispatcherServlet extends HttpServlet {
    * @throws IOException If an I/O exception occurs.
    */
   private void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    try {
+      HandlerMethod handlerMethod = getHandlerMethod(request);
 
-    HandlerMethod handlerMethod = getHandlerMethod(request);
+      if (handlerMethod != null) {
 
-    if (handlerMethod != null) {
+        Object[] resolvedArguments = resolveArguments(handlerMethod, request, response);
 
-      // Resolve arguments using registered argument resolvers
-      Object[] resolvedArguments = resolveArguments(handlerMethod, request, response);
+        Object returnValue = handlerMethod.handleRequest(resolvedArguments);
 
-      // Invoke the handler method
-      Object returnValue = handlerMethod.handleRequest(resolvedArguments);
-
-      // Process the return value
-      processReturnValue(returnValue, handlerMethod, response);
-    } else {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        processReturnValue(returnValue, handlerMethod, response);
+      } else {
+        throw new NotFoundException("Failed to find mapping for: %s method: %s".formatted(request.getRequestURI(), request.getMethod()));
+      }
+    } catch (Exception exception) {
+      handleException(request, response, exception);
     }
+  }
 
+  private void handleException(HttpServletRequest request, HttpServletResponse response, Exception exception) throws IOException {
+    log.debug("Handling exception:", exception);
+
+    Exception exceptionToHandle = unwrapInvocationExceptionIfNeeded(exception);
+    for (HandlerExceptionResolver resolver : exceptionResolvers) {
+      if (resolver.canHandle(exceptionToHandle.getClass())) {
+        try {
+          HandlerMethod exceptionHandlerMethod = resolver.resolveException(exceptionToHandle);
+          Object resolvedValue = exceptionHandlerMethod.handleRequest(exceptionToHandle);
+          processReturnValue(resolvedValue, exceptionHandlerMethod, response);
+          return;
+        } catch (InvocationTargetException e) {
+          log.error("Exception during processing exception", exception);
+          throw new RuntimeException("Exception during handling exception (%s)".formatted(exception.getMessage()), exception);
+        }
+      }
+    }
+    log.error("Unable to handle exception by exception resolvers", exception);
+    throw new RuntimeException("Unable to handle exception by exception resolvers (%s)".formatted(exception.getMessage()), exception);
+  }
+
+  private Exception unwrapInvocationExceptionIfNeeded(Exception exception) {
+    Exception exceptionToHandle = exception;
+    if (exception instanceof InvocationTargetException) {
+      exceptionToHandle = (Exception) ((InvocationTargetException) exception).getTargetException();
+    }
+    return exceptionToHandle;
   }
 
   /**
@@ -191,17 +232,23 @@ public class DispatcherServlet extends HttpServlet {
    * @throws IOException If an I/O exception occurs.
    */
   private void processReturnValue(Object returnValue, HandlerMethod method, HttpServletResponse response) throws IOException {
-    if (returnValue != null) {
-      for (ReturnValueProcessor processor : returnValueProcessors) {
-        if (processor.supports(returnValue.getClass())) {
-          if (processor.processReturnValue(returnValue, method, response)) {
-            return; // Successfully processed the return value
-          }
+    //  todo  if (returnValue != null) ??
+    for (ReturnValueProcessor processor : returnValueProcessors) {
+      if (processor.supports(returnValue.getClass())) {
+        if (processor.processReturnValue(returnValue, method, response)) {
+          return;
         }
       }
+    }
 
-      // No suitable processor found
-      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    sendInternalServerError(response);
+  }
+
+  private void sendInternalServerError(HttpServletResponse response) {
+    try {
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error");
+    } catch (IOException ioException) {
+      log.error("Exception during process request", ioException);
     }
   }
 

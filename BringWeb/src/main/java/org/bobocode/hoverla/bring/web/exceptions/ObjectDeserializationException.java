@@ -6,4 +6,8 @@ public class ObjectDeserializationException extends RuntimeException {
     super(message, cause);
   }
 
+  public ObjectDeserializationException(String message) {
+    super(message);
+  }
+
 }
