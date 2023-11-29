@@ -14,6 +14,7 @@ import org.apache.commons.lang3.ClassUtils;
 import org.bobocode.hoverla.bring.web.annotations.QueryParam;
 import org.bobocode.hoverla.bring.web.exceptions.ObjectDeserializationException;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
+import org.bobocode.hoverla.bring.web.util.TypeUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -87,33 +88,13 @@ public class QueryParamArgumentResolver implements HandlerMethodArgumentResolver
 
   private Object parseParameter(Class<?> targetType, String paramValue) {
     if (ClassUtils.isPrimitiveOrWrapper(targetType) || targetType == String.class) {
-      return parseType(targetType, paramValue);
+      return TypeUtils.parseType(targetType, paramValue);
     } else if (targetType.isEnum()) {
       return Enum.valueOf((Class<Enum>) targetType, paramValue);
     } else {
       log.warn("Unsupported target type {} for resolving query param value {}", targetType.getTypeName(), paramValue);
       return null;
     }
-  }
-
-  private Object parseType(Class<?> targetType, String paramValue) {
-    if (targetType == String.class) {
-      return paramValue;
-    } else if (targetType == boolean.class || targetType == Boolean.class) {
-      return Boolean.parseBoolean(paramValue);
-    } else if (targetType == short.class || targetType == Short.class) {
-      return Short.parseShort(paramValue);
-    } else if (targetType == int.class || targetType == Integer.class) {
-      return Integer.parseInt(paramValue);
-    } else if (targetType == long.class || targetType == Long.class) {
-      return Long.parseLong(paramValue);
-    } else if (targetType == double.class || targetType == Double.class) {
-      return Double.parseDouble(paramValue);
-    } else if (targetType == float.class || targetType == Float.class) {
-      return Float.parseFloat(paramValue);
-    }
-
-    return null;
   }
 
   private Object resolveCollectionParameter(Parameter parameter, String values) {

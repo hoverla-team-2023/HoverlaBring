@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.bobocode.hoverla.bring.web.annotations.PathVariable;
 import org.bobocode.hoverla.bring.web.exceptions.ObjectDeserializationException;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
+import org.bobocode.hoverla.bring.web.util.TypeUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,35 +47,10 @@ public class PathVariableArgumentResolver implements HandlerMethodArgumentResolv
 
     Class<?> parameterType = parameter.getType();
     try {
-      if (String.class.isAssignableFrom(parameterType)) {
-        return variableValue;
-      } else if (Byte.class.isAssignableFrom(parameterType) || byte.class.isAssignableFrom(parameterType)) {
-        return Byte.parseByte(variableValue);
-      } else if (Short.class.isAssignableFrom(parameterType) || short.class.isAssignableFrom(parameterType)) {
-        return Short.parseShort(variableValue);
-      } else if (Integer.class.isAssignableFrom(parameterType) || int.class.isAssignableFrom(parameterType)) {
-        return Integer.parseInt(variableValue);
-      } else if (Long.class.isAssignableFrom(parameterType) || long.class.isAssignableFrom(parameterType)) {
-        return Long.parseLong(variableValue);
-      } else if (Float.class.isAssignableFrom(parameterType) || float.class.isAssignableFrom(parameterType)) {
-        return Float.parseFloat(variableValue);
-      } else if (Double.class.isAssignableFrom(parameterType) || double.class.isAssignableFrom(parameterType)) {
-        return Double.parseDouble(variableValue);
-      } else if (Boolean.class.isAssignableFrom(parameterType) || boolean.class.isAssignableFrom(parameterType)) {
-        return Boolean.parseBoolean(variableValue);
-      } else if (Enum.class.isAssignableFrom(parameterType)) {
-
-        return Enum.valueOf((Class<Enum>) parameterType, variableValue);
-      }
+      log.debug("Resolving path variable param value with requestURI: {} , value: {}", requestURI, variableValue);
+      return TypeUtils.parseType(parameterType, variableValue);
     } catch (IllegalArgumentException e) {
       throw new ObjectDeserializationException("Failed to parse value from path variable", e);
-    }
-
-    //todo throw runtime exception(Create special class) and handle it later in exception handler (in scope of other story) or just return null
-    try {
-      throw new Exception("Unsupported parameter type for @PathVariable");
-    } catch (Exception exception) {
-      throw new RuntimeException(exception);
     }
   }
 
