@@ -35,9 +35,9 @@ import org.bobocode.hoverla.bring.web.servlet.resolver.PathVariableArgumentResol
 public @interface PathVariable {
 
   /**
-   * The name of the query parameter for resolving the annotated parameter.
+   * The name of the path variable for resolving the annotated parameter.
    *
-   * @return The name of the query parameter.
+   * @return The name of the path variable.
    */
   String value();
 

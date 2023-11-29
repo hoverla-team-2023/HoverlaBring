@@ -28,13 +28,13 @@ public class PojoReturnValueProcessor extends AbstractReturnValueProcessor {
 
   @Override
   public boolean processReturnValue(Object returnValue,
-                                    HandlerMethod executableMethod,
+                                    HandlerMethod handlerMethod,
                                     HttpServletResponse response) throws IOException {
     var converter = findConverter(returnValue.getClass(), APPLICATION_JSON.getValue());
     if (converter.isPresent()) {
       converter.get().write(returnValue, response, APPLICATION_JSON.getValue());
 
-      setStatusCode(executableMethod.getMethod(), response);
+      setStatusCode(handlerMethod.getMethod(), response);
 
       return true;
     }
