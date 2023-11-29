@@ -8,14 +8,10 @@ import java.lang.annotation.Target;
 import org.bobocode.hoverla.bring.annotations.Component;
 
 /**
- * Use this annotation to mark a class as a controller.
- *
- * @see RequestMapping
- * @see RequestBody
- * @see ResponseBody
+ * Annotation to mark a class as a global controller advice.
  */
-@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 @Component
-public @interface Controller {
+public @interface ControllerAdvice {
 }
