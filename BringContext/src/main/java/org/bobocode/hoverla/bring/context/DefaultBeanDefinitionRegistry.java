@@ -7,6 +7,9 @@ import java.util.Set;
 
 import org.bobocode.hoverla.bring.bean.BeanDefinition;
 
+/**
+ * Default class in context module responsible for BeanDefinition storing
+ */
 public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
 
   private final Map<String, BeanDefinition> beanDefinitions = new HashMap<>();

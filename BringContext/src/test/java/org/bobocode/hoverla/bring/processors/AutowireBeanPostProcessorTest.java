@@ -1,7 +1,5 @@
 package org.bobocode.hoverla.bring.processors;
 
-import java.lang.reflect.Field;
-
 import org.bobocode.hoverla.bring.bean.BeanDefinition;
 import org.bobocode.hoverla.bring.bean.BeanScope;
 import org.bobocode.hoverla.bring.context.DefaultBeanDefinitionRegistry;

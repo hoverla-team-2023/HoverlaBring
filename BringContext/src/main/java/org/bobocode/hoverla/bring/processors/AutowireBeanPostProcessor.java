@@ -12,6 +12,11 @@ import org.bobocode.hoverla.bring.factory.BeanFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This implementation of BeanPostProcessor is responsible for dependency injection process.
+ * It scans all recently created beans find fields marked with @Autowire annotation find required bean in BeanFactory and then inject dependency into given bean
+ * please note if no required data(beans or beanDefinition) to inject found you will accept BeanCreation exception
+ */
 @Slf4j
 public class AutowireBeanPostProcessor implements BeanPostProcessor {
 
@@ -36,6 +41,7 @@ public class AutowireBeanPostProcessor implements BeanPostProcessor {
   @Override
   public Object postProcessBean(Object bean, String beanName) {
     BeanDefinition beanDefinitionByBeanName = beanFactory.getBeanDefinitionByBeanName(beanName);
+    log.debug("Found next bean definition {} for bean with name {}", beanDefinitionByBeanName, beanName);
     if (beanDefinitionByBeanName == null) {
       throw new BeanInjectionException("Failed to inject dependency for bean with name" + beanName + " bean definition exists");
     }
@@ -54,9 +60,11 @@ public class AutowireBeanPostProcessor implements BeanPostProcessor {
 
   void injectDependency(Object bean, String beanName, BeanDefinition beanDefinitionByBeanName, Field field) {
     BeanDefinition candidate = defineRequiredBeanBeanDefinition(beanDefinitionByBeanName, field);
+    log.debug("Found next candidate {} to inject into field {} for bean with name {} ", candidate.getBeanName(), field.getName(), beanName);
     Object beanToInject = beanFactory.getBean(candidate.getBeanName());
     if (beanToInject == null) {
-      throw new BeanInjectionException("Failed to inject field " + field.getName() + " to bean " + beanName + ". Candidate object " + bean + " no required bean to inject found");
+      throw new BeanInjectionException(
+        "Failed to inject field " + field.getName() + " to bean " + beanName + ". Candidate object " + bean + " no required bean to inject found");
     }
     try {
       field.setAccessible(true);
