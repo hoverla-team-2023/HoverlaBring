@@ -9,6 +9,9 @@ import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
  */
 public interface HandlerExceptionResolver {
 
+  /**
+   * Determines if this exception resolver can handle exceptions of the given type.
+   */
   boolean canHandle(Class<? extends Exception> clazz);
 
   /**

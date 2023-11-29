@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.bobocode.hoverla.bring.web.annotations.RequestBody;
-import org.bobocode.hoverla.bring.web.exceptions.InvalidContentTypeException;
+import org.bobocode.hoverla.bring.web.exceptions.UnsupportedContentTypeException;
 import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 
@@ -46,7 +46,7 @@ public class RequestBodyMethodArgumentResolver extends HttpMessageConverterDeleg
       var message = "Unsupported content type: %s. Only %s is supported.".formatted(contentType, APPLICATION_JSON.getValue());
 
       log.error(message);
-      throw new InvalidContentTypeException(message);
+      throw new UnsupportedContentTypeException(message);
     }
   }
 

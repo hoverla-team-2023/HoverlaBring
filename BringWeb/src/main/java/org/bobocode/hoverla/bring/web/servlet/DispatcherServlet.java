@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bobocode.hoverla.bring.web.exceptions.GlobalControllerAdvice;
 import org.bobocode.hoverla.bring.web.exceptions.NotFoundException;
+import org.bobocode.hoverla.bring.web.exceptions.UnexpectedBringException;
 import org.bobocode.hoverla.bring.web.exceptions.resolvers.AnnotationBasedHandlerExceptionResolver;
 import org.bobocode.hoverla.bring.web.exceptions.resolvers.HandlerExceptionResolver;
 import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
@@ -77,7 +78,7 @@ public class DispatcherServlet extends HttpServlet {
 
     List<HttpMessageConverter> converters = List.of(new TextPlainHttpMessageConverter(objectMapper),
                                                     new JsonHttpMessageConverter(objectMapper),
-                                                 new JsonHttpMessageConverter(new ObjectMapper()));
+                                                    new JsonHttpMessageConverter(new ObjectMapper()));
 
     this.returnValueProcessors = List.of(new PojoReturnValueProcessor(converters),
                                          new ResponseEntityReturnValueProcessor(converters),
@@ -170,12 +171,12 @@ public class DispatcherServlet extends HttpServlet {
           return;
         } catch (InvocationTargetException e) {
           log.error("Exception during processing exception", exception);
-          throw new RuntimeException("Exception during handling exception (%s)".formatted(exception.getMessage()), exception);
+          throw new UnexpectedBringException("Exception during handling exception (%s)".formatted(exception.getMessage()), exception);
         }
       }
     }
     log.error("Unable to handle exception by exception resolvers", exception);
-    throw new RuntimeException("Unable to handle exception by exception resolvers (%s)".formatted(exception.getMessage()), exception);
+    throw new UnexpectedBringException("Unable to handle exception by exception resolvers (%s)".formatted(exception.getMessage()), exception);
   }
 
   private Exception unwrapInvocationExceptionIfNeeded(Exception exception) {

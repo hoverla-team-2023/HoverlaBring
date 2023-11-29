@@ -5,11 +5,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.bobocode.hoverla.bring.web.servlet.resolver.QueryParamArgumentResolver;
+import org.bobocode.hoverla.bring.web.servlet.resolver.PathVariableArgumentResolver;
 
 /**
  * Annotation for indicating that a method parameter should be resolved from
- * the query parameters of an HTTP request.
+ * the path variables of an HTTP request.
  *
  * <p>Methods annotated with this can have parameters annotated with
  * {@code @QueryParam} to specify the name of the query parameter to be used for
@@ -25,10 +25,10 @@ import org.bobocode.hoverla.bring.web.servlet.resolver.QueryParamArgumentResolve
  * }
  * </pre>
  *
- * <p>Typically used with a handler method resolver like {@link QueryParamArgumentResolver}
- * to automatically resolve and convert query parameters.
+ * <p>Typically used with a handler method resolver like {@link PathVariableArgumentResolver}
+ * to automatically resolve and convert path variables.
  *
- * @see QueryParamArgumentResolver
+ * @see PathVariableArgumentResolver
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)

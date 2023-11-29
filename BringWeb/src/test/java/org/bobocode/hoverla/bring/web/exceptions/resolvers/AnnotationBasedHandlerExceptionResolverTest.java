@@ -1,13 +1,28 @@
 package org.bobocode.hoverla.bring.web.exceptions.resolvers;
 
+import org.bobocode.hoverla.bring.web.RegisteringHandlerExceptionMethodException;
 import org.bobocode.hoverla.bring.web.annotations.ControllerAdvice;
 import org.bobocode.hoverla.bring.web.annotations.ExceptionHandler;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AnnotationBasedHandlerExceptionResolverTest {
+
+  @Test
+  void givenNoParameters_whenRegisterHandler_thenThrownException() {
+    assertThrows(RegisteringHandlerExceptionMethodException.class,
+                 () -> new AnnotationBasedHandlerExceptionResolver(new Object[] { new InvalidMockHandler1() }));
+  }
+
+  @Test
+  void givenIncompatibleParameterType_whenRegisterHandler_thenThrownException() {
+    assertThrows(RegisteringHandlerExceptionMethodException.class,
+                 () -> new AnnotationBasedHandlerExceptionResolver(new Object[] { new InvalidMockHandler2() }));
+  }
 
   @Test
   void whenCanHandle_thenShouldReturnTrueForMatchingException() {
@@ -19,7 +34,7 @@ class AnnotationBasedHandlerExceptionResolverTest {
     boolean result = resolver.canHandle(exceptionType);
 
     // Then
-    assertEquals(true, result);
+    assertTrue(result);
   }
 
   @Test
@@ -54,9 +69,8 @@ class AnnotationBasedHandlerExceptionResolverTest {
 
   private AnnotationBasedHandlerExceptionResolver createResolverWithExceptionHandlers() {
     Object[] controllerAdvices = { new MockHandler() };
-    AnnotationBasedHandlerExceptionResolver resolver = new AnnotationBasedHandlerExceptionResolver(controllerAdvices);
 
-    return resolver;
+    return new AnnotationBasedHandlerExceptionResolver(controllerAdvices);
   }
 
   // Custom exception classes for testing
@@ -80,6 +94,26 @@ class AnnotationBasedHandlerExceptionResolverTest {
 
     @ExceptionHandler(SubCustomException.class)
     public void handleSubCustomException(SubCustomException subCustomException) {
+      // Mock handler method
+    }
+
+  }
+
+  @ControllerAdvice
+  static class InvalidMockHandler1 {
+
+    @ExceptionHandler(Exception.class)
+    public void handleCustomException(CustomException exception) {
+      // Mock handler method
+    }
+
+  }
+
+  @ControllerAdvice
+  static class InvalidMockHandler2 {
+
+    @ExceptionHandler(Exception.class)
+    public void handleCustomException() {
       // Mock handler method
     }
 
