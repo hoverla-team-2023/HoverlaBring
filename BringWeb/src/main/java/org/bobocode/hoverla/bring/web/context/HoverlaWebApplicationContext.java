@@ -1,7 +1,12 @@
 package org.bobocode.hoverla.bring.web.context;
 
 import org.bobocode.hoverla.bring.context.HoverlaApplicationContext;
+import org.bobocode.hoverla.bring.factory.BeanFactory;
+import org.bobocode.hoverla.bring.web.processors.HandlerMappingProcessor;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class HoverlaWebApplicationContext extends HoverlaApplicationContext {
 
   // todo private
@@ -14,10 +19,12 @@ public class HoverlaWebApplicationContext extends HoverlaApplicationContext {
    */
 
   public HoverlaWebApplicationContext(String path) {
-    super(path); //todo  need tu update parent constructor to call doProcessBeans(); here after register BringWeb postProcessors
-    /// TODO: register created BeanPostProcessors f.e. HandlerMappingProcessor, ExceptionHandlerBpp
-    //todo also we can register servlet context here
-//    getBeanFactory().addBeanPostProcessor();
+    super(path);
+    //Register BeanPostProcessors add any other BeanPostProcessors if needed
+    BeanFactory beanFactory = getBeanFactory();
+    HandlerMappingProcessor postProcessor = new HandlerMappingProcessor(beanFactory);
+    beanFactory.addBeanPostProcessor(postProcessor);
+    super.doProcessBeans();
+    log.info("Bean processing finished successfully, app is ready to use");
   }
-
 }

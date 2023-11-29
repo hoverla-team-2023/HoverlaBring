@@ -15,15 +15,15 @@ public class HandlerMappingProcessor implements BeanPostProcessor {
   }
 
   @Override
-  public Object postProcessBeforeInitialization(Object bean, String beanName) {
-    return null;
+  public void postProcessBeforeInitialization(Object bean, String beanName) {
+    //return null;
   }
 
   @Override
-  public Object postProcessAfterInitialization(Object bean, String beanName) {
+  public void postProcessAfterInitialization(Object bean, String beanName) {
     BeanDefinition beanDefinitionByBeanName = beanFactory.getBeanDefinitionByBeanName(beanName);
     // todo define it's controller, and save it in some registry
-    return null;
+    //return null;
   }
 
 }

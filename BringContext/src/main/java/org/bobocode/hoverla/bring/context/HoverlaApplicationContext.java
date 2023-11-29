@@ -60,7 +60,7 @@ public class HoverlaApplicationContext implements ApplicationContext {
     return beanFactoryImpl;
   }
 
-  private void doProcessBeans() {
+  protected void doProcessBeans() {
     for (String beanDefinitionName : beanDefinitionRegistry.getAllBeanDefinitionNames()) {
       log.debug("Processing bean with name {} started", beanDefinitionName);
       beanFactory.tryToInitializeSingletonBean(beanDefinitionName);
