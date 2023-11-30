@@ -69,7 +69,7 @@ public class BeanFactoryImpl implements BeanFactory {
     }
     Object createdBean;
     try {
-      createdBean = doCreateSingletoneBean(beanName);
+      createdBean = doCreateSingletonBean(beanName);
     } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
       throw new BeanCreationException("Error happened during crete of bean with name: " + beanName, e);
     }
@@ -82,7 +82,7 @@ public class BeanFactoryImpl implements BeanFactory {
     return createdBean;
   }
 
-  private Object doCreateSingletoneBean(String beanName) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+  private Object doCreateSingletonBean(String beanName) throws InvocationTargetException, InstantiationException, IllegalAccessException {
     BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
     if (beanDefinition == null) {
       throw new BeanCreationException("Can't find BeanDefinition for name" + beanName);

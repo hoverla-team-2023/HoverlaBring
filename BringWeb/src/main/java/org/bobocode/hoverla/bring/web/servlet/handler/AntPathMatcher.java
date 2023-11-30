@@ -54,7 +54,7 @@ public class AntPathMatcher {
    * @return an array of the pattern's constituent parts
    */
 
-  private String[] tokenizePattern(String pattern) {
+  protected String[] tokenizePattern(String pattern) {
     return pattern.split("/");
   }
 
@@ -65,7 +65,7 @@ public class AntPathMatcher {
    *
    * @return an array of the path's constituent parts
    */
-  private String[] tokenizePath(String path) {
+  protected String[] tokenizePath(String path) {
     return path.split("/");
   }
 
@@ -76,7 +76,7 @@ public class AntPathMatcher {
    *
    * @return true if the token is a wildcard, false otherwise
    */
-  private boolean isWildcard(String token) {
+  protected boolean isWildcard(String token) {
     return token.equals("*") || token.startsWith("{") && token.endsWith("}");
   }
 
@@ -88,7 +88,7 @@ public class AntPathMatcher {
    *
    * @return true if the tokens match, false otherwise
    */
-  private boolean matchTokens(String patternToken, String pathToken) {
+  protected boolean matchTokens(String patternToken, String pathToken) {
     return patternToken.equals(pathToken) ||
            isPatternWithCurlyBraces(patternToken) &&
            matchPatternWithCurlyBraces(patternToken, pathToken);
@@ -101,7 +101,7 @@ public class AntPathMatcher {
    *
    * @return true if the token is a pattern with curly braces, false otherwise
    */
-  private boolean isPatternWithCurlyBraces(String token) {
+  protected boolean isPatternWithCurlyBraces(String token) {
     return token.startsWith("{") && token.endsWith("}");
   }
 
@@ -113,7 +113,7 @@ public class AntPathMatcher {
    *
    * @return true if the tokens match, false otherwise
    */
-  private boolean matchPatternWithCurlyBraces(String patternToken, String pathToken) {
+  protected boolean matchPatternWithCurlyBraces(String patternToken, String pathToken) {
     String patternRegex = patternToken.substring(1, patternToken.length() - 1);
     return pathToken.matches(patternRegex);
   }
