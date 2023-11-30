@@ -1,6 +1,7 @@
 package org.bobocode.hoverla.bring.web.servlet.processor;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public abstract class AbstractReturnValueProcessor implements ReturnValueProcess
     this.converters = converters;
   }
 
-  protected Optional<HttpMessageConverter> findConverter(Class<?> type, String contentType) {
+  protected Optional<HttpMessageConverter> findConverter(Type type, String contentType) {
     var converter = converters.stream()
       .filter(c -> c.canWrite(type, contentType))
       .findFirst();
