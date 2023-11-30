@@ -1,16 +1,18 @@
 package org.bobocode.hoverla.bring.web.servlet.mapping;
 
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
+
 import org.bobocode.hoverla.bring.web.annotations.Controller;
 import org.bobocode.hoverla.bring.web.annotations.RequestMapping;
 import org.bobocode.hoverla.bring.web.annotations.RequestMethod;
 import org.bobocode.hoverla.bring.web.servlet.handler.AntPathMatcher;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * AnnotationBasedHandlerMapping is a class that maps HTTP requests to handler methods based on annotations.
@@ -45,7 +47,8 @@ public class AnnotationBasedHandlerMapping implements HandlerMapping {
             String path = mapping.path();
             RequestMethod requestMethod = mapping.method();
             handlerMethods.put(path + ":" + requestMethod.name(),
-                    new HandlerMethod(bean.getClass(), method, path, method.getParameters(), bean, requestMethod));
+                    new HandlerMethod(bean.getClass(), method, path, method.getParameters(), bean, requestMethod,
+                                      method.getGenericReturnType()));
           }
         }
       }
