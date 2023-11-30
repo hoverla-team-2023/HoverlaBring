@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public interface HttpMessageConverter {
 
-  boolean canWrite(Class<?> type, String contentType);
+  boolean canWrite(Type type, String contentType);
 
   void write(Object value, HttpServletResponse response, String contentType) throws IOException;
 

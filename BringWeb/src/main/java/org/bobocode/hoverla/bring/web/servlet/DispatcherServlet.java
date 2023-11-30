@@ -131,6 +131,11 @@ public class DispatcherServlet extends HttpServlet {
     processRequest(req, resp);
   }
 
+  @Override
+  public ServletContext getServletContext() {
+    return servletContext;
+  }
+
   /**
    * Processes the incoming request, delegates to the appropriate handler method, and handles the return value.
    *
@@ -233,9 +238,8 @@ public class DispatcherServlet extends HttpServlet {
    * @throws IOException If an I/O exception occurs.
    */
   private void processReturnValue(Object returnValue, HandlerMethod method, HttpServletResponse response) throws IOException {
-    //  todo  if (returnValue != null) ??
     for (ReturnValueProcessor processor : returnValueProcessors) {
-      if (processor.supports(returnValue.getClass())) {
+      if (processor.supports(method.getGenericReturnType())) {
         if (processor.processReturnValue(returnValue, method, response)) {
           return;
         }

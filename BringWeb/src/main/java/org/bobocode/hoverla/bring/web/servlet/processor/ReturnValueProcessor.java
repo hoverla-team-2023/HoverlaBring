@@ -1,6 +1,7 @@
 package org.bobocode.hoverla.bring.web.servlet.processor;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -26,7 +27,7 @@ public interface ReturnValueProcessor {
    *
    * @return true if the return type is supported
    */
-  boolean supports(Class<?> type);
+  boolean supports(Type type);
 
   /**
    * Converts the return value of the method and set it to the {@link HttpServletResponse response}.

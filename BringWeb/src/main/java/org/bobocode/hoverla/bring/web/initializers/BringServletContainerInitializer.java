@@ -1,16 +1,18 @@
 package org.bobocode.hoverla.bring.web.initializers;
 
-import jakarta.servlet.ServletContainerInitializer;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.HandlesTypes;
-import lombok.extern.slf4j.Slf4j;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
+import jakarta.servlet.ServletContainerInitializer;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.HandlesTypes;
+
+import org.bobocode.hoverla.bring.web.exceptions.NoServletInitializerPresentException;
 import org.bobocode.hoverla.bring.web.util.BannerUtils;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Basic {@link ServletContainerInitializer} implementation. It is invoked by a servlet container when the web application is started.
@@ -39,12 +41,19 @@ public class BringServletContainerInitializer implements ServletContainerInitial
   public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
     log.trace("Initializing servlet container");
     BannerUtils.printBanner("/banner_hoverla.txt");
-    var initializerClass = classes.stream()
+    var initializers = classes.stream()
       .filter(this::isServletInitializer)
-      .findFirst();
+      .toList();
 
-    if (initializerClass.isPresent()) {
-      var servletInitializer = (ServletInitializer) getInstance(initializerClass.get());
+    if (initializers.isEmpty()) {
+      var message = "No ServletInitializer found in the classpath. Consider extending the AbstractDispatcherServletInitializer to create a dispatcher servlet.";
+
+      log.error(message);
+      throw new NoServletInitializerPresentException(message);
+    }
+
+    for (Class<?> initializer : initializers) {
+      var servletInitializer = (ServletInitializer) getInstance(initializer);
       servletInitializer.onStartup(servletContext);
     }
   }
@@ -58,8 +67,10 @@ public class BringServletContainerInitializer implements ServletContainerInitial
     try {
       return clazz.getDeclaredConstructor().newInstance();
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      log.error("Unable to create instance of class {}. Please make sure that the class has a public default constructor", clazz.getName(), e);
-      throw new ServletException("Failed to create instantiate ServletInitializer", e);
+      var message = "Unable to create instance of class %s. Please make sure that the class has a public default constructor".formatted(clazz.getName());
+
+      log.error(message, e);
+      throw new ServletException(message, e);
     }
   }
 

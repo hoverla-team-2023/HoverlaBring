@@ -30,12 +30,15 @@ public class JsonHttpMessageConverter implements HttpMessageConverter {
   }
 
   @Override
-  public boolean canWrite(Class<?> type, String contentType) {
+  public boolean canWrite(Type type, String contentType) {
     return isSupportedContentType(contentType) || canWrite(type);
   }
 
-  private boolean canWrite(Class<?> type) {
-    return !isTextPlainType(type) && objectMapper.canSerialize(type);
+  private boolean canWrite(Type type) {
+    if (type instanceof Class<?> clazz) {
+      return !isTextPlainType(type) && objectMapper.canSerialize(clazz);
+    }
+    return false;
   }
 
   @Override
