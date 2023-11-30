@@ -7,12 +7,12 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
-import org.bobocode.hoverla.bring.web.servlet.entity.ResponseEntity;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 
 import static java.util.Objects.nonNull;
 
 import static org.bobocode.hoverla.bring.web.servlet.converter.ContentType.APPLICATION_JSON;
+import static org.bobocode.hoverla.bring.web.util.TypeUtils.isResponseEntity;
 import static org.bobocode.hoverla.bring.web.util.TypeUtils.isTextPlainType;
 
 /**
@@ -30,7 +30,7 @@ public class PojoReturnValueProcessor extends AbstractReturnValueProcessor {
 
   @Override
   public boolean supports(Type type) {
-    return nonNull(type) && !isTextPlainType(type) && ResponseEntity.class != type && hasJsonConverter(type);
+    return nonNull(type) && !isTextPlainType(type) && !isResponseEntity(type) && hasJsonConverter(type);
   }
 
   @Override

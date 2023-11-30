@@ -12,6 +12,8 @@ import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.entity.ResponseEntity;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 
+import static org.bobocode.hoverla.bring.web.util.TypeUtils.isResponseEntity;
+
 /**
  * Processor that converts {@link ResponseEntity} into the appropriate servlet {@link HttpServletResponse response}.
  * Depending on the {@link ResponseEntity#getBody() body} the response content type can be either application/json or text/plain.
@@ -29,7 +31,7 @@ public class ResponseEntityReturnValueProcessor extends AbstractReturnValueProce
 
   @Override
   public boolean supports(Type type) {
-    return ResponseEntity.class == type;
+    return isResponseEntity(type);
   }
 
   @Override
@@ -47,7 +49,7 @@ public class ResponseEntityReturnValueProcessor extends AbstractReturnValueProce
 
         converter.get().write(body, response, contentType);
 
-        setStatusCode(handlerMethod.getMethod(), response);
+        response.setStatus(responseEntity.getStatus());
 
         return true;
       }

@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.bobocode.hoverla.bring.web.annotations.StatusCode;
 import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.entity.ResponseEntity;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
@@ -70,21 +69,18 @@ class ResponseEntityReturnValueProcessorTest {
     assertFalse(result);
   }
 
-  private void mockMethod() {}
-
   @Test
   void givenResponseEntityReturnValue_whenProcessReturnValue_thenWriteToResponseAndReturnTrue(
     @Mock HandlerMethod handlerMethod,
     @Mock HttpServletResponse response
-  ) throws IOException, NoSuchMethodException {
+  ) throws IOException {
     var header = "Content-Type";
     var contentType = "application/json";
     Object body = new Object();
-    var returnValue = new ResponseEntity<>(body, Map.of(header, List.of(contentType)));
-    var mockMethod = this.getClass().getDeclaredMethod("mockMethod");
+    var status = 201;
+    var returnValue = new ResponseEntity<>(body, Map.of(header, List.of(contentType)), status);
 
     when(httpMessageConverter.canWrite(Object.class, contentType)).thenReturn(true);
-    when(handlerMethod.getMethod()).thenReturn(mockMethod);
 
     var result = instance.processReturnValue(returnValue, handlerMethod, response);
 
@@ -92,28 +88,7 @@ class ResponseEntityReturnValueProcessorTest {
     verify(httpMessageConverter).canWrite(Object.class, contentType);
     verify(response).addHeader(header, contentType);
     verify(httpMessageConverter).write(body, response, contentType);
-  }
-
-  @StatusCode(304)
-  void mockMethodWithStatusCode() {}
-
-  @Test
-  void givenMethodWithStatusCodeAnnotation_whenProcessReturnValue_thenWriteToResponseAndReturnTrue(
-    @Mock HandlerMethod handlerMethod,
-    @Mock HttpServletResponse response
-  ) throws IOException, NoSuchMethodException {
-    var contentType = "application/json";
-    var statusCode = 304;
-    var returnValue = new ResponseEntity<>(10, Map.of("Content-Type", List.of(contentType)));
-    var mockMethod = this.getClass().getDeclaredMethod("mockMethodWithStatusCode");
-
-    when(httpMessageConverter.canWrite(Integer.class, contentType)).thenReturn(true);
-    when(handlerMethod.getMethod()).thenReturn(mockMethod);
-
-    var result = instance.processReturnValue(returnValue, handlerMethod, response);
-
-    assertTrue(result);
-    verify(response).setStatus(statusCode);
+    verify(response).setStatus(status);
   }
 
   @Test

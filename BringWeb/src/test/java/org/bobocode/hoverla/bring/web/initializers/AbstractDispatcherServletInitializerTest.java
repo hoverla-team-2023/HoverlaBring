@@ -59,6 +59,11 @@ class AbstractDispatcherServletInitializerTest {
       return new Object[0];
     }
 
+    @Override
+    protected Object[] controllerAdvices() {
+      return new Object[0];
+    }
+
   }
 
 }
