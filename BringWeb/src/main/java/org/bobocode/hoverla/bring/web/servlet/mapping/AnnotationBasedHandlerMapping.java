@@ -45,7 +45,8 @@ public class AnnotationBasedHandlerMapping implements HandlerMapping {
           String path = mapping.path();
           RequestMethod requestMethod = mapping.method();
           handlerMethods.put(path + ":" + requestMethod.name(),
-                             new HandlerMethod(controller.getClass(), method, path, method.getParameters(), controller, requestMethod));
+                             new HandlerMethod(controller.getClass(), method, path, method.getParameters(), controller, requestMethod,
+                                               method.getGenericReturnType()));
         }
       }
     }

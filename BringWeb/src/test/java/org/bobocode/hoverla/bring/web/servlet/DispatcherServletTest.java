@@ -2,7 +2,6 @@ package org.bobocode.hoverla.bring.web.servlet;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.List;
 
@@ -21,7 +20,6 @@ import org.bobocode.hoverla.bring.web.servlet.resolver.HandlerMethodArgumentReso
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -34,7 +32,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class DispatcherServletTest {
+public class DispatcherServletTest {
 
   private ServletContext servletContext;
 
@@ -66,7 +64,6 @@ class DispatcherServletTest {
 
   private Object[] controllerAdvices;
 
-  @InjectMocks
   private DispatcherServlet dispatcherServlet;
 
   @BeforeEach
@@ -92,10 +89,8 @@ class DispatcherServletTest {
     when(handlerMapping1.getHandlerMethod(request)).thenReturn(handlerMethod);
     Parameter parameter1 = mock(Parameter.class);
     Parameter parameter2 = mock(Parameter.class);
-    Method method = mock(Method.class);
-    when(handlerMethod.getMethod()).thenReturn(method);
     when(handlerMethod.getParameters()).thenReturn(new Parameter[] { parameter1, parameter2 });
-    when(method.getGenericReturnType()).thenReturn(String.class);
+    when(handlerMethod.getGenericReturnType()).thenReturn(String.class);
 
     when(argumentResolver1.supportsParameter(parameter1)).thenReturn(true);
     when(argumentResolver1.supportsParameter(parameter2)).thenReturn(true);
@@ -140,9 +135,7 @@ class DispatcherServletTest {
     doReturn(exceptionHandlerMethod).when(exceptionResolver1).resolveException(any(NotFoundException.class));
     String errorMessage = "Not found error message";
     doReturn(errorMessage).when(exceptionHandlerMethod).handleRequest(any(NotFoundException.class));
-    Method method = mock(Method.class);
-    doReturn(method).when(exceptionHandlerMethod).getMethod();
-    doReturn(errorMessage.getClass()).when(method).getGenericReturnType();
+    doReturn(errorMessage.getClass()).when(exceptionHandlerMethod).getGenericReturnType();
 
     doReturn(true).when(returnValueProcessor1).supports(errorMessage.getClass());
     doReturn(true).when(returnValueProcessor1).processReturnValue(eq(errorMessage), eq(exceptionHandlerMethod), eq(response));
@@ -174,9 +167,7 @@ class DispatcherServletTest {
     doReturn(exceptionHandlerMethod).when(exceptionResolver1).resolveException(any(ObjectDeserializationException.class));
     String errorMessage = "error message";
     doReturn(errorMessage).when(exceptionHandlerMethod).handleRequest(any(ObjectDeserializationException.class));
-    Method method = mock(Method.class);
-    doReturn(method).when(exceptionHandlerMethod).getMethod();
-    doReturn(String.class).when(method).getGenericReturnType();
+    doReturn(String.class).when(exceptionHandlerMethod).getGenericReturnType();
 
     doReturn(true).when(returnValueProcessor1).supports(errorMessage.getClass());
 

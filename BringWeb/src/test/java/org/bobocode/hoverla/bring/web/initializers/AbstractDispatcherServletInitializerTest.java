@@ -15,8 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AbstractDispatcherServletInitializerTest {
@@ -33,7 +33,7 @@ class AbstractDispatcherServletInitializerTest {
 
   @Test
   void givenServletContext_whenOnStartup_thenRegisterDispatcherServlet(@Mock ServletContext servletContext, @Mock ServletRegistration.Dynamic registration) {
-    when(servletContext.addServlet(eq("dispatcher"), any(DispatcherServlet.class))).thenReturn(registration);
+    doReturn(registration).when(servletContext).addServlet(eq("dispatcher"), any(DispatcherServlet.class));
 
     instance.onStartup(servletContext);
 

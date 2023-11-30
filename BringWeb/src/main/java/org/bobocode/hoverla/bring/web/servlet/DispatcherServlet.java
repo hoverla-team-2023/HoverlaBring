@@ -239,7 +239,7 @@ public class DispatcherServlet extends HttpServlet {
    */
   private void processReturnValue(Object returnValue, HandlerMethod method, HttpServletResponse response) throws IOException {
     for (ReturnValueProcessor processor : returnValueProcessors) {
-      if (processor.supports(method.getMethod().getGenericReturnType())) {
+      if (processor.supports(method.getGenericReturnType())) {
         if (processor.processReturnValue(returnValue, method, response)) {
           return;
         }
