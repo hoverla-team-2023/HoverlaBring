@@ -1,15 +1,10 @@
 package org.bobocode.hoverla.bring.web.servlet;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Parameter;
-import java.util.List;
-
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import org.bobocode.hoverla.bring.context.HoverlaApplicationContext;
 import org.bobocode.hoverla.bring.web.exceptions.NotFoundException;
 import org.bobocode.hoverla.bring.web.exceptions.ObjectDeserializationException;
 import org.bobocode.hoverla.bring.web.exceptions.resolvers.HandlerExceptionResolver;
@@ -22,6 +17,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Parameter;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -58,18 +58,17 @@ public class DispatcherServletTest {
   private HandlerExceptionResolver exceptionResolver1;
 
   @Mock
+  private HoverlaApplicationContext context;
+
+  @Mock
   private HandlerExceptionResolver exceptionResolver2;
-
-  private Object[] controllers;
-
-  private Object[] controllerAdvices;
 
   private DispatcherServlet dispatcherServlet;
 
   @BeforeEach
   void setUp() throws ServletException {
 
-    dispatcherServlet = new DispatcherServlet(servletContext, controllers, controllerAdvices);
+    dispatcherServlet = new DispatcherServlet(servletContext, context);
 
     // Set mocks using List.of
     dispatcherServlet.setReturnValueProcessors(List.of(returnValueProcessor1, returnValueProcessor2));

@@ -1,6 +1,6 @@
 package org.bobocode.hoverla.bring.web.exceptions.resolvers;
 
-import org.bobocode.hoverla.bring.web.RegisteringHandlerExceptionMethodException;
+import org.bobocode.hoverla.bring.web.exceptions.RegisteringHandlerExceptionMethodException;
 import org.bobocode.hoverla.bring.web.annotations.ControllerAdvice;
 import org.bobocode.hoverla.bring.web.annotations.ExceptionHandler;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;

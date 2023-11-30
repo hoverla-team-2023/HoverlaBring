@@ -1,11 +1,11 @@
 package org.bobocode.hoverla.bring.factory;
 
-import java.util.Collection;
-
 import org.bobocode.hoverla.bring.bean.BeanDefinition;
 import org.bobocode.hoverla.bring.context.BeanDefinitionRegistry;
 import org.bobocode.hoverla.bring.processors.BeanFactoryPostProcessor;
 import org.bobocode.hoverla.bring.processors.BeanPostProcessor;
+
+import java.util.Collection;
 
 public interface BeanFactory {
 
@@ -22,4 +22,5 @@ public interface BeanFactory {
 
   Collection<BeanDefinition> getRegisteredBeanDefinitions();
 
+  Collection<Object> getAllBeans();
 }

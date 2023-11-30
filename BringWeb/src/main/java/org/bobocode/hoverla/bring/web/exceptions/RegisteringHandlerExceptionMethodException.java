@@ -1,4 +1,4 @@
-package org.bobocode.hoverla.bring.web;
+package org.bobocode.hoverla.bring.web.exceptions;
 
 /**
  * Exception thrown when an issue occurs during the registration of an exception handler method.

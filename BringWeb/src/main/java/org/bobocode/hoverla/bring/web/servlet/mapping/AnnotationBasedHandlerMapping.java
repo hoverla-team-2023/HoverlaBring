@@ -6,6 +6,7 @@ import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.bobocode.hoverla.bring.web.annotations.Controller;
 import org.bobocode.hoverla.bring.web.annotations.RequestMapping;
 import org.bobocode.hoverla.bring.web.annotations.RequestMethod;
 import org.bobocode.hoverla.bring.web.servlet.handler.AntPathMatcher;
@@ -35,18 +36,20 @@ public class AnnotationBasedHandlerMapping implements HandlerMapping {
    * It uses reflection to find all methods in the specified package that are annotated with the specified annotation.
    * The mapping between HTTP requests and handler methods is based on the value of the specified annotation.
    *
-   * @param controllers an array of controller objects
+   * @param beans an array of controller candidates
    */
-  public AnnotationBasedHandlerMapping(Object... controllers) {
-    for (Object controller : controllers) {
-      for (Method method : controller.getClass().getMethods()) {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-          RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-          String path = mapping.path();
-          RequestMethod requestMethod = mapping.method();
-          handlerMethods.put(path + ":" + requestMethod.name(),
-                             new HandlerMethod(controller.getClass(), method, path, method.getParameters(), controller, requestMethod,
-                                               method.getGenericReturnType()));
+  public AnnotationBasedHandlerMapping(Object... beans) {
+    for (Object bean : beans) {
+      if(isController(bean)){
+        for (Method method : bean.getClass().getMethods()) {
+          if (method.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+            String path = mapping.path();
+            RequestMethod requestMethod = mapping.method();
+            handlerMethods.put(path + ":" + requestMethod.name(),
+                    new HandlerMethod(bean.getClass(), method, path, method.getParameters(), bean, requestMethod,
+                                      method.getGenericReturnType()));
+          }
         }
       }
     }
@@ -72,6 +75,10 @@ public class AnnotationBasedHandlerMapping implements HandlerMapping {
       }
     }
     return null;
+  }
+
+  private boolean isController(Object bean) {
+    return bean.getClass().isAnnotationPresent(Controller.class);
   }
 
 }

@@ -1,18 +1,16 @@
 package org.bobocode.hoverla.bring.web.servlet;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.bobocode.hoverla.bring.context.HoverlaApplicationContext;
 import org.bobocode.hoverla.bring.web.exceptions.GlobalControllerAdvice;
 import org.bobocode.hoverla.bring.web.exceptions.NotFoundException;
 import org.bobocode.hoverla.bring.web.exceptions.UnexpectedBringException;
@@ -35,11 +33,10 @@ import org.bobocode.hoverla.bring.web.servlet.resolver.RequestBodyMethodArgument
 import org.bobocode.hoverla.bring.web.servlet.resolver.RequestEntityMethodArgumentResolver;
 import org.bobocode.hoverla.bring.web.servlet.resolver.ServletArgumentResolver;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Basic {@link HttpServlet} implementation
@@ -48,7 +45,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Setter
-@RequiredArgsConstructor
 public class DispatcherServlet extends HttpServlet {
 
   private final ServletContext servletContext;
@@ -58,9 +54,13 @@ public class DispatcherServlet extends HttpServlet {
   private List<HandlerMapping> handlerMappings;
   private List<HandlerExceptionResolver> exceptionResolvers;
 
-  private final Object[] controllers;
+  private final HoverlaApplicationContext context;
 
-  private final Object[] controllerAdvices;
+
+  public DispatcherServlet(ServletContext servletContext, HoverlaApplicationContext context) {
+    this.servletContext = servletContext;
+    this.context = context;
+  }
 
   /**
    * Initializes the servlet with the given configuration.
@@ -90,10 +90,12 @@ public class DispatcherServlet extends HttpServlet {
                                      new RequestBodyMethodArgumentResolver(converters),
                                      new RequestEntityMethodArgumentResolver(converters));
 
-    this.handlerMappings = List.of(new AnnotationBasedHandlerMapping(controllers)); // Need to provide Controllers what will be initialized and scanned
+
+    Object[] objects = context.getBeanFactory().getAllBeans().toArray();
+    this.handlerMappings = List.of(new AnnotationBasedHandlerMapping(objects)); // Need to provide Controllers what will be initialized and scanned
     this.exceptionResolvers = List.of(
-      new AnnotationBasedHandlerExceptionResolver(ArrayUtils.addAll(new Object[] { new GlobalControllerAdvice() },
-                                                                    controllerAdvices))); // Need to provide Controllers what will be initialized and scanned
+      new AnnotationBasedHandlerExceptionResolver(ArrayUtils.addAll(
+              new Object[] { new GlobalControllerAdvice() }, objects))); // Need to provide Controllers what will be initialized and scanned
   }
 
   @Override
