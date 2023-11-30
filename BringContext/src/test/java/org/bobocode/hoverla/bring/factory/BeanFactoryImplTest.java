@@ -78,7 +78,7 @@ class BeanFactoryImplTest {
   }
 
   @Test
-  void testAddBeanFactoryPostProcessor() {
+  void AddBeanFactoryPostProcessor() {
     // Mocking
     BeanFactoryPostProcessor postProcessorMock = Mockito.mock(BeanFactoryPostProcessor.class);
 
@@ -87,7 +87,7 @@ class BeanFactoryImplTest {
   }
 
   @Test
-  void testAddBeanPostProcessor() {
+  void AddBeanPostProcessor() {
     // Mocking
     BeanPostProcessor postProcessorMock = Mockito.mock(BeanPostProcessor.class);
 
@@ -96,7 +96,7 @@ class BeanFactoryImplTest {
   }
 
   @Test
-  void testGetBeanForUnknownBean() {
+  void GetBeanForUnknownBean() {
     // Mocking
     String beanName = "unknownBean";
     when(beanDefinitionRegistryMock.getBeanDefinition(beanName)).thenReturn(null);
@@ -106,7 +106,7 @@ class BeanFactoryImplTest {
   }
 
   @Test
-  void testGetBeanForNonExistentTargetClass() {
+  void GetBeanForNonExistentTargetClass() {
     // Mocking
     String beanName = "testBean";
     BeanDefinition beanDefinitionMock = Mockito.mock(BeanDefinition.class);
@@ -119,7 +119,7 @@ class BeanFactoryImplTest {
   }
 
   @Test
-  void testGetBeanForNonInstantiableClass() {
+  void GetBeanForNonInstantiableClass() {
     // Mocking
     String beanName = "testBean";
     BeanDefinition beanDefinitionMock = Mockito.mock(BeanDefinition.class);

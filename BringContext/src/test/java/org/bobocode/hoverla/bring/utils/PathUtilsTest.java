@@ -15,14 +15,17 @@ class PathUtilsTest {
 
   @Test
   void testToFileSystemPath() {
-    assertEquals("org/bobocode/hoverla/bring/utils", PathUtils.toFileSystemPath("org.bobocode.hoverla.bring.utils"));
+    String expected = "org" + File.separator + "bobocode" + File.separator + "hoverla" + File.separator + "bring" + File.separator + "utils";
+    assertEquals(expected, PathUtils.toFileSystemPath("org.bobocode.hoverla.bring.utils"));
     assertNull(PathUtils.toFileSystemPath(null));
     assertEquals("", PathUtils.toFileSystemPath(""));
   }
 
   @Test
   void testToPackageNamePath() {
-    assertEquals("org.bobocode.hoverla.bring.utils", PathUtils.toPackageNamePath("org/bobocode/hoverla/bring/utils"));
+    String expectedPath = "org.bobocode.hoverla.bring.utils";
+    String inputPath = "org/bobocode/hoverla/bring/utils".replace("/", java.io.File.separator);
+    assertEquals(expectedPath, PathUtils.toPackageNamePath(inputPath));
     assertNull(PathUtils.toPackageNamePath(null));
     assertEquals("", PathUtils.toPackageNamePath(""));
   }
