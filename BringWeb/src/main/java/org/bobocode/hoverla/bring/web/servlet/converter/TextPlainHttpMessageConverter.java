@@ -26,7 +26,7 @@ public class TextPlainHttpMessageConverter implements HttpMessageConverter {
   private final ObjectMapper objectMapper;
 
   @Override
-  public boolean canWrite(Class<?> type, String contentType) {
+  public boolean canWrite(Type type, String contentType) {
     return isSupportedContentType(contentType) || isTextPlainType(type);
   }
 

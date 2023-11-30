@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.bobocode.hoverla.bring.web.servlet.converter.ContentType.TEXT_PLAIN;
+import static org.bobocode.hoverla.bring.web.servlet.processor.AbstractReturnValueProcessor.DEFAULT_STATUS_CODE;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -71,8 +72,20 @@ class TextPlainReturnValueProcessorTest {
   private record Pojo() {}
 
   @Test
-  void givePojoType_whenSupports_thenReturnsTrue() {
+  void givenPojoType_whenSupports_thenReturnsTrue() {
     var result = instance.supports(Pojo.class);
+    assertFalse(result);
+  }
+
+  @Test
+  void givenVoidType_whenSupports_thenReturnsTrue() {
+    var result = instance.supports(Void.TYPE);
+    assertTrue(result);
+  }
+
+  @Test
+  void givenNull_whenSupports_thenReturnsFalse() {
+    var result = instance.supports(null);
     assertFalse(result);
   }
 
@@ -141,20 +154,40 @@ class TextPlainReturnValueProcessorTest {
   }
 
   @Test
+  void givenNullReturnValue_whenProcessReturnValue_thenSetStatusCode(
+    @Mock HandlerMethod handlerMethod,
+    @Mock HttpServletResponse response
+  ) throws NoSuchMethodException, IOException {
+    var statusCode = 304;
+    var mockMethod = this.getClass().getDeclaredMethod("mockMethodWithStatusCode");
+
+    when(handlerMethod.getMethod()).thenReturn(mockMethod);
+
+    var result = instance.processReturnValue(null, handlerMethod, response);
+
+    assertTrue(result);
+    verify(response).setStatus(statusCode);
+    verifyNoInteractions(converter);
+  }
+
+  @Test
   void givenNotSupportedReturnValue_whenProcessReturnValue_thenDoNothingAndReturnFalse(
     @Mock HandlerMethod handlerMethod,
     @Mock HttpServletResponse response
-  ) throws IOException {
+  ) throws IOException, NoSuchMethodException {
     var returnValue = new Object();
     var contentType = TEXT_PLAIN.getValue();
+    var mockMethod = this.getClass().getDeclaredMethod("mockMethod");
 
     when(converter.canWrite(Object.class, contentType)).thenReturn(false);
+    when(handlerMethod.getMethod()).thenReturn(mockMethod);
 
     var result = instance.processReturnValue(returnValue, handlerMethod, response);
 
     assertFalse(result);
     verify(converter).canWrite(Object.class, contentType);
-    verifyNoInteractions(handlerMethod, response);
+    verify(handlerMethod).getMethod();
+    verify(response).setStatus(DEFAULT_STATUS_CODE);
   }
 
 }

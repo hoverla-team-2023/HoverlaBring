@@ -1,6 +1,7 @@
 package org.bobocode.hoverla.bring.web.servlet.processor;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,11 +12,16 @@ import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.entity.ResponseEntity;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 
+import static org.bobocode.hoverla.bring.web.util.TypeUtils.isResponseEntity;
+
 /**
  * Processor that converts {@link ResponseEntity} into the appropriate servlet {@link HttpServletResponse response}.
  * Depending on the {@link ResponseEntity#getBody() body} the response content type can be either application/json or text/plain.
  *
  * @see ResponseEntity
+ * @see org.bobocode.hoverla.bring.web.annotations.StatusCode
+ * @see PojoReturnValueProcessor
+ * @see TextPlainReturnValueProcessor
  */
 public class ResponseEntityReturnValueProcessor extends AbstractReturnValueProcessor {
 
@@ -24,8 +30,8 @@ public class ResponseEntityReturnValueProcessor extends AbstractReturnValueProce
   }
 
   @Override
-  public boolean supports(Class<?> type) {
-    return ResponseEntity.class.isAssignableFrom(type);
+  public boolean supports(Type type) {
+    return isResponseEntity(type);
   }
 
   @Override
@@ -43,7 +49,7 @@ public class ResponseEntityReturnValueProcessor extends AbstractReturnValueProce
 
         converter.get().write(body, response, contentType);
 
-        setStatusCode(handlerMethod.getMethod(), response);
+        response.setStatus(responseEntity.getStatus());
 
         return true;
       }

@@ -87,6 +87,14 @@ class PojoReturnValueProcessorTest {
     verifyNoInteractions(converter);
   }
 
+  @Test
+  void givenNullReturnValue_whenSupports_thenReturnFalse() {
+    var result = instance.supports(null);
+
+    assertFalse(result);
+    verifyNoInteractions(converter);
+  }
+
   private void mockMethod() {}
 
   @Test
