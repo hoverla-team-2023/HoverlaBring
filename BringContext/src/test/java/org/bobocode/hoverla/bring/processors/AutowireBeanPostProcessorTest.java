@@ -14,12 +14,15 @@ import org.bobocode.hoverla.bring.objects.TestFirstService;
 import org.bobocode.hoverla.bring.objects.TestSecondService;
 import org.bobocode.hoverla.bring.objects.TestThirdService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ExtendWith(MockitoExtension.class)
 class AutowireBeanPostProcessorTest {
 
   private AutowireBeanPostProcessor autowireBeanPostProcessor;
@@ -28,50 +31,6 @@ class AutowireBeanPostProcessorTest {
   private void init() {
     this.beanFactory = new BeanFactoryImpl();
     this.autowireBeanPostProcessor = new AutowireBeanPostProcessor(beanFactory);
-  }
-
-  //todo move this test to beanFactory
-  @Test
-  public void postProcessBean() {
-    init();
-    String firstServiceBeanName = "testFirstService";
-    String secondServiceBeanName = "testSecondService";
-    String thirdServiceBeanName = "testThirdService";
-    DefaultBeanDefinitionRegistry defaultBeanDefinitionRegistry = new DefaultBeanDefinitionRegistry();
-
-    BeanDefinition testFirstServiceBeanDefinition = new BeanDefinition();
-    testFirstServiceBeanDefinition.setBeanName(firstServiceBeanName);
-    testFirstServiceBeanDefinition.setTargetClass(TestFirstService.class);
-    testFirstServiceBeanDefinition.setScope(BeanScope.SINGLETON);
-    defaultBeanDefinitionRegistry.registerBeanDefinition(firstServiceBeanName, testFirstServiceBeanDefinition);
-
-    BeanDefinition testSecondServiceBeanDefinition = new BeanDefinition();
-    testSecondServiceBeanDefinition.setBeanName(secondServiceBeanName);
-    testSecondServiceBeanDefinition.setTargetClass(TestSecondService.class);
-    testSecondServiceBeanDefinition.setScope(BeanScope.SINGLETON);
-    defaultBeanDefinitionRegistry.registerBeanDefinition(secondServiceBeanName, testSecondServiceBeanDefinition);
-
-    BeanDefinition testThirdServiceBeanDefinition = new BeanDefinition();
-    testThirdServiceBeanDefinition.setBeanName(thirdServiceBeanName);
-    testThirdServiceBeanDefinition.setTargetClass(TestThirdService.class);
-    testThirdServiceBeanDefinition.setScope(BeanScope.SINGLETON);
-    ;
-    defaultBeanDefinitionRegistry.registerBeanDefinition(thirdServiceBeanName, testThirdServiceBeanDefinition);
-
-    beanFactory.setBeanDefinitionRegistry(defaultBeanDefinitionRegistry);
-    beanFactory.addBeanPostProcessor(new AutowireBeanPostProcessor(beanFactory));
-    beanFactory.tryToInitializeSingletonBean(firstServiceBeanName);
-
-    TestFirstService testFirstServiceBean = (TestFirstService) beanFactory.getBean(firstServiceBeanName);
-    TestSecondService testSecondServiceBean = (TestSecondService) beanFactory.getBean(secondServiceBeanName);
-    TestThirdService testThirdServiceBean = (TestThirdService) beanFactory.getBean(thirdServiceBeanName);
-
-    assertNotNull(testFirstServiceBean);
-    assertNotNull(testSecondServiceBean);
-    assertNotNull(testThirdServiceBean);
-
-    assertSame(testFirstServiceBean.getTestSecondService(), testSecondServiceBean);
-    assertSame(testSecondServiceBean.getTestThirdService(), testThirdServiceBean);
   }
 
   @Test
@@ -123,7 +82,7 @@ class AutowireBeanPostProcessorTest {
   public void postProcessBean_exceptionShouldThrowWhenNoBeanDefinitionFoundForGivenBeanEvenIfThereAreBeanDefinitionForFieldMarkedWithAutowireAnnotation() {
     init();
     String firstServiceBeanName = "testFirstService";
-    String testSecondServiceNamw ="second service";
+    String testSecondServiceNamw = "second service";
     DefaultBeanDefinitionRegistry defaultBeanDefinitionRegistry = new DefaultBeanDefinitionRegistry();
     TestFirstService testFirstService = new TestFirstService();
 
@@ -223,4 +182,5 @@ class AutowireBeanPostProcessorTest {
 
     assertThrows(BeanInjectionException.class, () -> autowireBeanPostProcessor.postProcessBean(testComponent, componentName));
   }
+
 }

@@ -1,6 +1,9 @@
 package org.bobocode.hoverla.bring.web.util;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+
+import org.bobocode.hoverla.bring.web.servlet.entity.ResponseEntity;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -17,6 +20,13 @@ public class TypeUtils {
       return isPrimitiveOrWrapper(clazz) || String.class.isAssignableFrom(clazz);
     }
     return false;
+  }
+
+  public static boolean isResponseEntity(Type type) {
+    if (type instanceof ParameterizedType parameterizedType) {
+      return ResponseEntity.class.isAssignableFrom((Class<?>) parameterizedType.getRawType());
+    }
+    return ResponseEntity.class == type; // for raw type ResponseEntity without generic type
   }
 
   public static Object parseType(Class<?> targetType, String paramValue) {
