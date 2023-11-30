@@ -44,24 +44,14 @@ class AbstractDispatcherServletInitializerTest {
 
     verify(registration).setLoadOnStartup(1);
     verify(registration).setAsyncSupported(true);
-    verify(registration).addMapping("test-mapping");
+    verify(registration).addMapping("/");
   }
 
   private static class MockAbstractDispatcherServletInitializer extends AbstractDispatcherServletInitializer {
 
     @Override
-    protected String getServletMapping() {
-      return "test-mapping";
-    }
-
-    @Override
-    protected Object[] controllers() {
-      return new Object[0];
-    }
-
-    @Override
-    protected Object[] controllerAdvices() {
-      return new Object[0];
+    protected String getPackagesToScan() {
+      return "org.bobocode.hoverla.bring.web.initializers";
     }
 
   }

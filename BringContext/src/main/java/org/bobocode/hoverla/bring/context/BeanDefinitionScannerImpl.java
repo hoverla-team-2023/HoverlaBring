@@ -1,9 +1,14 @@
 package org.bobocode.hoverla.bring.context;
 
+import lombok.extern.slf4j.Slf4j;
+import org.bobocode.hoverla.bring.annotations.Scope;
+import org.bobocode.hoverla.bring.bean.BeanDefinition;
+import org.bobocode.hoverla.bring.bean.BeanScope;
+import org.bobocode.hoverla.bring.utils.BeanUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,13 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import org.bobocode.hoverla.bring.annotations.Scope;
-import org.bobocode.hoverla.bring.bean.BeanDefinition;
-import org.bobocode.hoverla.bring.bean.BeanScope;
-import org.bobocode.hoverla.bring.utils.BeanUtils;
-
-import lombok.extern.slf4j.Slf4j;
 
 import static org.bobocode.hoverla.bring.utils.PathUtils.getClassName;
 import static org.bobocode.hoverla.bring.utils.PathUtils.getFiles;
@@ -81,8 +79,7 @@ public class BeanDefinitionScannerImpl implements BeanDefinitionScanner {
         var directory = new File(resource.toURI());
         var result = findClasses(directory, basePackage);
         classes.addAll(result);
-      } catch (URISyntaxException e) {
-        log.error("Failed to get directory by path " + basePackage, e);
+      } catch (Exception ignored) {
       }
     }
     log.info("Scanning for components completed");
@@ -135,8 +132,17 @@ public class BeanDefinitionScannerImpl implements BeanDefinitionScanner {
     return null;
   }
 
-  public boolean isAnnotationPresent(Class<?> clazz) {
-    return annotations.stream().anyMatch(clazz::isAnnotationPresent);
+  private boolean isAnnotationPresent(Class<?> clazz) {
+    for (Class<? extends Annotation> targetAnnotation : annotations) {
+      Annotation[] annotationsOnClass = clazz.getAnnotations();
+      for (Annotation annotation : annotationsOnClass) {
+        if (clazz.isAnnotationPresent(targetAnnotation)
+                || annotation.annotationType().isAnnotationPresent(targetAnnotation)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   private static BeanDefinition getBeanDefinition(Class<?> beanClass, String beanName) {

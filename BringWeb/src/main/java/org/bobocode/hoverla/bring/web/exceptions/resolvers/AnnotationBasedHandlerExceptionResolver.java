@@ -1,17 +1,16 @@
 package org.bobocode.hoverla.bring.web.exceptions.resolvers;
 
+import lombok.extern.slf4j.Slf4j;
+import org.bobocode.hoverla.bring.web.exceptions.RegisteringHandlerExceptionMethodException;
+import org.bobocode.hoverla.bring.web.annotations.ControllerAdvice;
+import org.bobocode.hoverla.bring.web.annotations.ExceptionHandler;
+import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.bobocode.hoverla.bring.web.RegisteringHandlerExceptionMethodException;
-import org.bobocode.hoverla.bring.web.annotations.ControllerAdvice;
-import org.bobocode.hoverla.bring.web.annotations.ExceptionHandler;
-import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * An implementation of {@code HandlerExceptionResolver} that resolves exceptions using methods annotated with

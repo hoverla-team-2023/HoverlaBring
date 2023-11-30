@@ -43,18 +43,8 @@ class BringServletContainerInitializerTest {
   private static class ValidDispatcherServletInitializer extends AbstractDispatcherServletInitializer {
 
     @Override
-    protected String getServletMapping() {
-      return "test-mapping";
-    }
-
-    @Override
-    protected Object[] controllers() {
-      return new Object[0];
-    }
-
-    @Override
-    protected Object[] controllerAdvices() {
-      return new Object[0];
+    protected String getPackagesToScan() {
+      return "org.bobocode.hoverla.bring.web.initializers";
     }
 
   }
