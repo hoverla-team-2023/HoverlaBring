@@ -40,24 +40,20 @@ public class ResponseEntityReturnValueProcessor extends AbstractReturnValueProce
       var body = responseEntity.getBody();
       var contentType = getContentType(responseEntity);
 
-      // Find the appropriate converter for the body type and MIME type
       var converter = findConverter(body.getClass(), contentType);
 
       if (converter.isPresent()) {
-        // Set headers from the ResponseEntity
         setHeaders(responseEntity.getHeaders(), response);
 
-        // Write the response using the converter
         converter.get().write(body, response, contentType);
 
-        // Set response status code
         setStatusCode(handlerMethod.getMethod(), response);
 
-        return true; // Successfully processed the return value
+        return true;
       }
     }
 
-    return false; // Unable to process the return value
+    return false;
   }
 
   private String getContentType(ResponseEntity<?> responseEntity) {

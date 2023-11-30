@@ -1,0 +1,1 @@
+WARN org.bobocode.hoverla.bring.web.util.BannerUtils [main] : Banner with path: non_existing_resource.txt is not found in classpath

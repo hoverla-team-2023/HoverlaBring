@@ -5,48 +5,53 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 import org.bobocode.hoverla.bring.web.annotations.RequestMethod;
+import org.bobocode.hoverla.bring.web.exceptions.InvocationHandleMethodException;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Represents a handler method that can process incoming requests.
+ * Represents a handler method that can process incoming requests or handle exceptions.
  */
 @Data
 @Slf4j
-@RequiredArgsConstructor
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class HandlerMethod {
 
   /**
    * The type of the bean containing the handler method.
    */
-  private final Class<?> beanType;
+  private Class<?> beanType;
 
   /**
    * The handler method.
    */
-  private final Method method;
+  private Method method;
 
   /**
-   * The path associated with the handler method.
+   * The path associated with the handler method. Optional
    */
-  private final String path;
+  private String path;
 
   /**
    * The parameters of the handler method.
    */
-  private final Parameter[] parameters;
+  private Parameter[] parameters;
 
   /**
    * The instance of the bean containing the handler method.
    */
-  private final Object bean;
+  private Object bean;
 
   /**
-   * The enum of the  HTTP  request methods.
+   * The enum of the  HTTP  request methods. Optional
    */
-  private final RequestMethod requestMethod;
+  private RequestMethod requestMethod;
 
   /**
    * Handles the incoming request by invoking the handler method with resolved arguments.
@@ -55,13 +60,13 @@ public class HandlerMethod {
    *
    * @return The result of invoking the handler method.
    *
-   * @throws RuntimeException If an exception occurs during method invocation.
+   * @throws InvocationHandleMethodException If an exception occurs during the method invocation.
    */
-  public Object handleRequest(Object... resolvedArguments) {
+  public Object handleRequest(Object... resolvedArguments) throws InvocationTargetException {
     try {
       return method.invoke(bean, resolvedArguments);
-    } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new RuntimeException(e);
+    } catch (IllegalAccessException e) {
+      throw new InvocationHandleMethodException("Failed to invoke handler method", e);
     }
   }
 
