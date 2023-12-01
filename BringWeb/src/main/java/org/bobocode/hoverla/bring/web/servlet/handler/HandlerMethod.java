@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
 import org.bobocode.hoverla.bring.web.annotations.RequestMethod;
 import org.bobocode.hoverla.bring.web.exceptions.InvocationHandleMethodException;
@@ -66,8 +67,15 @@ public class HandlerMethod {
    * @throws InvocationHandleMethodException If an exception occurs during the method invocation.
    */
   public Object handleRequest(Object... resolvedArguments) throws InvocationTargetException {
+    log.debug("Invoking handler method: {} with resolved arguments: {}", method.toGenericString(), Arrays.toString(resolvedArguments));
+
     try {
-      return method.invoke(bean, resolvedArguments);
+      Object result = method.invoke(bean, resolvedArguments);
+
+      log.debug("Successfully invoked handler method: {} with resolved arguments: {}", method.toGenericString(), Arrays.toString(resolvedArguments));
+
+      return result;
+
     } catch (IllegalAccessException e) {
       throw new InvocationHandleMethodException("Failed to invoke handler method", e);
     }

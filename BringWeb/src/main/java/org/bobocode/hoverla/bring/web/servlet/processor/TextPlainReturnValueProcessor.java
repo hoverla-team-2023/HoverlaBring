@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 
+import lombok.extern.slf4j.Slf4j;
+
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -22,6 +24,7 @@ import static org.bobocode.hoverla.bring.web.util.TypeUtils.isTextPlainType;
  * @see ResponseEntityReturnValueProcessor
  * @see PojoReturnValueProcessor
  */
+@Slf4j
 public class TextPlainReturnValueProcessor extends AbstractReturnValueProcessor {
 
   public TextPlainReturnValueProcessor(List<HttpMessageConverter> converters) {
@@ -37,24 +40,31 @@ public class TextPlainReturnValueProcessor extends AbstractReturnValueProcessor 
   public boolean processReturnValue(Object returnValue,
                                     HandlerMethod handlerMethod,
                                     HttpServletResponse response) throws IOException {
-    // Set response status code
     setStatusCode(handlerMethod.getMethod(), response);
 
     if (isNull(returnValue)) {
-      return true; // No return value to process so return true
+
+      log.debug("No return value to process, returning true.");
+
+      return true;
     }
 
     var contentType = TEXT_PLAIN.getValue();
     var converter = findConverter(returnValue.getClass(), contentType);
 
     if (converter.isPresent()) {
-      // Write the response body to the output stream
+
+      log.debug("Found converter for return value type: {}", returnValue.getClass());
+
       converter.get().write(returnValue, response, contentType);
 
-      return true; // Successfully processed the return value
+      log.debug("Processed return value successfully.");
+
+      return true;
     }
 
-    return false; // Unable to process the return value
+    log.debug("Unable to process the return value, returning false.");
+    return false;
   }
 
 }
