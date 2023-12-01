@@ -126,7 +126,8 @@ Follow these steps to get started with our project:
   ![tomcatrun.png](assets/tomcatrun.png)
 
 **You can see the Hoverla HelloWorld application in module BringWebDemo**
-****
+
+
 # Hoverla  quirks and features
 
 ___
@@ -138,13 +139,12 @@ ___
 - **[@Component](#component)**: These annotations are used to indicate that a class is a source of bean definitions.
 - The @Component annotation is a class-level annotation.
 - **[@Autowired](#autowired)**: This annotation provides control over where and how autowiring should be accomplished. It can be used 
-- to autowire
-- bean on the setter method, constructor, a property, or methods with arbitrary names and/or multiple arguments.
+- to autowire bean on the setter method, constructor, a property, or methods with arbitrary names and/or multiple arguments.
 - **[@Scope](#scope)**: This annotation is used to specify the scope of the beans. It allows you to set the BeanScope value to Singleton.
 - **[BeanPostProcessor](#beanPostProcessor)**: This is a hook that allows for custom modification of new bean instances, 
 - for example, checking for marker interfaces or wrapping them with proxies.
-- **[BeanFactoryPostProcessor](#beanFactoryPostProcessor)**:This is the hook that can be invoked after scanning and before t
-- the instantiation of  bean objects
+- **[BeanFactoryPostProcessor](#beanFactoryPostProcessor)**:This is the hook that can be invoked after scanning and before 
+- the instantiation of  bean objects.
 
 
 ### Hoverla Web 
@@ -157,14 +157,14 @@ ___
 - **[PathVariable](#pathVariable)**: This annotation is used to bind a method parameter to a URI template variable.
 - **[QueryParam](#queryParam)**: This annotation is used to extract query parameters from the Request URI.
 - **[RequestBody](#requestBody)**: This annotation is used to bind the HTTP request body with a method parameter.
-- **[RequestMapping](#requestMapping)**: This annotation is used for mapping web requests onto specific handler classes 
-- and/or handler methods.
 - **[ResponseBody](#responseBody)**: This annotation is used to bind the HTTP response body with a method return value.
+- **[RequestMapping](#requestMapping)**: This annotation is used for mapping web requests onto specific handler classes
+- and/or handler methods.
 - **[StatusCode](#statusCode)**: This annotation is used to specify the HTTP status code for the response.
-- **[RequestEntity<T>](#requestEntity)**: This class represents an HTTP request entity with headers and a body.
 - **[ResponseEntity<T>](#responseEntity)**: This class represents a response entity that contains a body, headers, and a status code.
+- **[RequestEntity<T>](#requestEntity)**: This class represents an HTTP request entity with headers and a body.
 
-#### Application context
+# Application context
 
 This is a Java application that creates an instance of the `HoverlaApplicationContext` class, 
 which is a framework for managing and creating objects in a Java application. 
@@ -190,7 +190,7 @@ public class Application {
 }
 ```
 
-#### @Component and @Autowired
+### @Component and @Autowired
 
 
 ---
@@ -267,6 +267,7 @@ ___
 
 To initialize a dispatcher servlet you need to introduce a new class in classpath, witch extends `AbstractDispatcherServletInitializer`.
 This class will then be scanned and initialized automatically. Please note that the class should have a public no-args constructor.
+___
 
 Example:
 
@@ -279,6 +280,8 @@ public class DispatcherServletConfiguration extends AbstractDispatcherServletIni
   }}
 
 ```
+___
+### @Controller
 
 To register a controller just mark your class with `@Controller` annotation. After that you are able to introduce your own endpoints
 by marking them with `@RequestMapping` annotation.
@@ -303,11 +306,15 @@ public class MyBobocodeController {
 record TeamDTO(String team, Map<String, String> teammates) {
 }
 ```
+___
 
-@ControllerAdvice
+### @ControllerAdvice
 You can handle exceptions in a flexible and customizable manner by relying on exception handler methods defined in controller advice
-classes. Controller advice classes can be annotated with @ControllerAdvice, and exception handler methods within those classes are
-annotated with @ExceptionHandler.
+classes. Controller advice classes can be annotated with `@ControllerAdvice`, and exception handler methods within those classes are
+annotated with `@ExceptionHandler`.
+
+Example:
+```java
 @ControllerAdvice
 public class YourGlobalControllerAdvice {
 
@@ -319,9 +326,36 @@ return new Error(exception.getMessage());
 
 record Error(String errorMessage) {}
 }
+```
+___
+### @PathVariable
+PathVariable is used to extract values from the URI path in Hoverla-Bring. It is often used to capture dynamic values in the URL.
+Supports the resolution of various parameter types, including primitive types, their wrapper classes, String, Enum, and collections (List,
+Set).
 
-
-##### Request/Response objects
+Example:
+```java
+@RequestMapping(path = "/bobocode/hoverla/{id}", method = RequestMethod.GET)
+public ResponseEntity<String> getEntityById(@PathVariable("id") Long id) {
+// Logic to fetch entity by id
+return ResponseEntity.ok("Entity with ID: " + id);
+}
+```
+___
+### @QueryParam
+QueryParam is used to extract values from query parameters in Hoverla-Bring. It allows you to access values passed in the URL query string.
+Supports the resolution of various parameter types, including primitive types, their wrapper classes, String, Enum, and collections (List,
+Set).
+Example:
+```java
+@RequestMapping(path = "/bobocode/hoverla", method = RequestMethod.GET)
+public ResponseEntity<String> getEntitiesByType(@QueryParam("type") String entityType) {
+// Logic to fetch entities by type
+return ResponseEntity.ok("Entities of type: " + entityType);
+}
+```
+___
+### Request/Response objects
 
 The Bring Framework supports `application/json` and `text/plain` content types. Thus, all POJOs that are returned by the servlet
 are converted to JSON, and all primitive values are returned as `text/plain`. Also, if you want to receive an object in endpoint, it should
@@ -342,7 +376,23 @@ public void testRequestEntity(RequestEntity<TestDto> requestEntity){
   System.out.println(requestEntity);
   }
 ```
+___
 
+### @RequestMapping
+RequestMapping is used to map web requests to specific methods or classes in Hoverla-Bring. It allows you to define the URL patterns and
+HTTP methods that trigger the execution of a method.
+
+Example:
+
+```java
+@RequestMapping(path = "/bobocode/hoverla", method = RequestMethod.GET)
+public ResponseEntity<String> helloWorld() {
+return ResponseEntity.ok("Hello, Hoverla!");
+}
+```
+___
+
+### @StatusCode
 You can mark your method with `@StatusCode` annotation to provide status code for the response:
 
 ```java
@@ -356,7 +406,8 @@ public List<TeamDTO> helloWorldDto(){
   return List.of(dto);
   }
 ```
-
+___
+### ResponseEntity
 `ResponseEntity<T>` return type gives an ability to specify response body, headers, and status code:
 
 ```java
@@ -369,7 +420,7 @@ public ResponseEntity<String> training(){
   );
   }
 ```
-
+___
 Also, you can inject additional jakarta objects into your endpoint. Such as:
 
 - request - `HttpServletRequest`
@@ -393,87 +444,15 @@ public void testServletObjects(HttpServletRequest request,
   session.setAttribute("hello","world");
   }
 ```
+___
 
-@PathVariable
-PathVariable is used to extract values from the URI path in Hoverla-Bring. It is often used to capture dynamic values in the URL.
-Supports the resolution of various parameter types, including primitive types, their wrapper classes, String, Enum, and collections (List,
-Set).
+### RequestEntity
+`RequestEntity<T>` This class represents an HTTP request entity with headers and a body.:
 
-Example:
-
-java
-Copy code
-@RequestMapping(path = "/bobocode/hoverla/{id}", method = RequestMethod.GET)
-public ResponseEntity<String> getEntityById(@PathVariable("id") Long id) {
-// Logic to fetch entity by id
-return ResponseEntity.ok("Entity with ID: " + id);
-}
-@QueryParam
-QueryParam is used to extract values from query parameters in Hoverla-Bring. It allows you to access values passed in the URL query string.
-Supports the resolution of various parameter types, including primitive types, their wrapper classes, String, Enum, and collections (List,
-Set).
-Example:
-
-java
-Copy code
-@RequestMapping(path = "/bobocode/hoverla", method = RequestMethod.GET)
-public ResponseEntity<String> getEntitiesByType(@QueryParam("type") String entityType) {
-// Logic to fetch entities by type
-return ResponseEntity.ok("Entities of type: " + entityType);
-}
-@RequestBody
-RequestBody is used to extract the request body in Hoverla-Bring. It allows you to receive data in the request body, typically in JSON
-format.
-
-Example:
-
-java
-Copy code
-@RequestMapping(path = "/bobocode/hoverla", method = RequestMethod.POST)
-public ResponseEntity<String> createEntity(@RequestBody EntityDTO entityDTO) {
-// Logic to create an entity
-return ResponseEntity.status(HttpStatus.CREATED).body("Entity created successfully");
-}
-@RequestMapping
-RequestMapping is used to map web requests to specific methods or classes in Hoverla-Bring. It allows you to define the URL patterns and
-HTTP methods that trigger the execution of a method.
-
-Example:
-
-java
-Copy code
-@RequestMapping(path = "/bobocode/hoverla", method = RequestMethod.GET)
-public ResponseEntity<String> helloWorld() {
-return ResponseEntity.ok("Hello, Hoverla!");
-}
-
-@ResponseBody
-ResponseBody is used to indicate that the return value of a method should be directly serialized into the HTTP response body in
-Hoverla-Bring. It is often used when returning JSON data.
-
-Example:
-
-java
-Copy code
-@RequestMapping(path = "/bobocode/hoverla", method = RequestMethod.GET)
-@ResponseBody
-public ResponseEntity<String> getJsonData() {
-return ResponseEntity.ok("{\"key\": \"value\"}");
-}
-StatusCode
-StatusCode is an annotation in Hoverla-Bring used to provide a status code for the HTTP response. It is often used in conjunction with
-@RequestMapping to specify the status code.
-
-Example:
-
-java
-Copy code
-@StatusCode(202)
-@RequestMapping(path = "/bobocode/hoverla-dto", method = RequestMethod.GET)
-public List<TeamDTO> helloWorldDto() {
-var dto = new TeamDTO("hoverla", Map.of(
-"test1", "user1",
-"test2", "user2"
-));
-return List.of(dto);
-}
+```java
+public Object resolveArgument(HttpServletRequest request, HttpServletResponse response) {
+  var body = readRequestBody(genericType, request);
+  return new RequestEntity<>(getHeaders(request), body); // request body
+  }
+```
+___
