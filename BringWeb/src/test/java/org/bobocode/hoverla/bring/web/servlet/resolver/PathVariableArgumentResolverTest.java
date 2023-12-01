@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.bobocode.hoverla.bring.web.annotations.PathVariable;
 import org.bobocode.hoverla.bring.web.annotations.RequestMapping;
 import org.bobocode.hoverla.bring.web.annotations.RequestMethod;
+import org.bobocode.hoverla.bring.web.exceptions.InvalidPathVariableException;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -95,6 +97,22 @@ public class PathVariableArgumentResolverTest {
     assertEquals(456L, noteIdResult);
   }
 
+  @Test
+  void resolveArgument_throwInvalidPathVariableException() throws NoSuchMethodException {
+    Method exampleMethod = TestController.class.getMethod("invalidPathMethod", String.class);
+    String expectedMessage = "Failed to extract value for the path variable: invalid_id";
+    Parameter[] parameters = exampleMethod.getParameters();
+
+    when(handlerMethod.getPath()).thenReturn("/example/{id}/test");
+    when(request.getRequestURI()).thenReturn("/example/123/test");
+
+    InvalidPathVariableException result = assertThrows(InvalidPathVariableException.class, () ->
+      resolver.resolveArgument(handlerMethod, parameters[0], request, response));
+
+    assertEquals(expectedMessage, result.getMessage());
+    assertTrue(result.getCause() instanceof IllegalArgumentException);
+  }
+
   enum TestEnum {
     VALUE1,
     VALUE2
@@ -123,6 +141,11 @@ public class PathVariableArgumentResolverTest {
 
     @RequestMapping(path = "/conversations/{conversationId}/notes/{noteId}", method = RequestMethod.POST)
     public void exampleMethod(@PathVariable("conversationId") String conversationId, @PathVariable("noteId") Long noteId) {
+
+    }
+
+    @RequestMapping(path = "/example/{id}/test", method = RequestMethod.GET)
+    public void invalidPathMethod(@PathVariable("invalid_id") String id) {
 
     }
 

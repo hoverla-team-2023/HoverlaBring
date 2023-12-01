@@ -34,7 +34,7 @@ public class TextPlainHttpMessageConverter implements HttpMessageConverter {
   public void write(Object value, HttpServletResponse response, String contentType) throws IOException {
     var content = getContentType(contentType);
 
-    log.trace("Writing plain text response with content type: {}", content);
+    log.debug("Writing plain text response with content type: {}", content);
     response.setContentType(content);
     response.getWriter().write(value.toString());
   }

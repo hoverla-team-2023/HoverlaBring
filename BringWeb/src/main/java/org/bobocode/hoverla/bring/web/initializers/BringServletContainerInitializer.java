@@ -39,7 +39,7 @@ public class BringServletContainerInitializer implements ServletContainerInitial
    */
   @Override
   public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
-    log.trace("Initializing servlet container");
+    log.info("Initializing servlet container");
     BannerUtils.printBanner("/banner_hoverla.txt");
     var initializers = classes.stream()
       .filter(this::isServletInitializer)
