@@ -11,10 +11,11 @@ classDiagram
 
     class HttpMessageConverter {
         + write(value: Object, response: HttpServletResponse, contentType: String): void
-        + canWrite(type: Class<?>, contentType: String): boolean
+        + canWrite(type: Type, contentType: String): boolean
         + getSupportedContentType(): String
-        + read(request: HttpServletRequest, targetType: Class<?>): Object
-        + canRead(type: Class<?>, contentType: String): boolean
+        + read(request: HttpServletRequest, targetType: Type): Object
+        + canRead(type: Type, contentType: String): boolean
+        + isSupportedContentType(contentType: String): boolean
     }
     <<interface>> HttpMessageConverter
 
@@ -38,25 +39,33 @@ classDiagram
         + getHandlerMethod(request: HttpServletRequest): HandlerMethod
     }
 
+    class HandlerExceptionResolver {
+        + resolveException(exception: Exception): HandlerMethod
+    }
+
     class DispatcherServlet {
         - servletContext: ServletContext
         - returnValueProcessors: List<ReturnValueProcessor>
         - argumentResolvers: List<HandlerMethodArgumentResolver>
         - handlerMappings: List<HandlerMapping>
+        - exceptionResolvers: List<HandlerMapping>
         + init(config: ServletConfig): void
-        + service(req: HttpServletRequest, resp: HttpServletResponse): void
+        + doGet(req: HttpServletRequest, resp: HttpServletResponse): void
         - processRequest(request: HttpServletRequest, response: HttpServletResponse): void
         - getHandlerMethod(request: HttpServletRequest): HandlerMethod
         - resolveArguments(handlerMethod: HandlerMethod, request: HttpServletRequest, response: HttpServletResponse): Object[]
         - processReturnValue(returnValue: Object, method: HandlerMethod, request: HttpServletRequest, response: HttpServletResponse): void
+        - handleException(request: HttpServletRequest, response: HttpServletResponse, exception: Exception): void
     }
 
     DispatcherServlet --> HandlerMapping
-    HandlerMapping --> HandlerMethod
+    HandlerMapping -- HandlerMethod: uses
+    HandlerExceptionResolver -- HandlerMethod: uses
+    DispatcherServlet --> HandlerExceptionResolver
     DispatcherServlet --> HandlerMethodArgumentResolver
     DispatcherServlet --> ReturnValueProcessor
-    HandlerMethodArgumentResolver --> HttpMessageConverter
-    ReturnValueProcessor --> HttpMessageConverter
+    HandlerMethodArgumentResolver -- HttpMessageConverter: uses
+    ReturnValueProcessor -- HttpMessageConverter: uses
 
 ```
 
@@ -101,6 +110,24 @@ sequenceDiagram
         ReturnValueProcessor ->> DispatcherServlet: Process Response
     end
 
+
+    alt Exception Handling
+        DispatcherServlet ->> HandlerExceptionResolver: Resolve Exception
+        HandlerExceptionResolver ->> HandlerExceptionResolver: Find Suitable Resolver
+        HandlerExceptionResolver ->> HandlerMethod: Resolve Exception
+        HandlerMethod ->> ControllerAdvice: Invoke Exception Handler Method
+        ControllerAdvice ->> HandlerMethod: Exception Handler Method Execution
+        HandlerMethod ->> ReturnValueProcessor: Process Exception Handler Return Value
+
+        loop For each ReturnValueProcessor
+            ReturnValueProcessor ->> ReturnValueProcessor: Find Suitable ReturnValueProcessor
+            ReturnValueProcessor ->> HttpMessageConverter: Process Return Value
+            HttpMessageConverter ->> ReturnValueProcessor: Write Response
+            ReturnValueProcessor ->> DispatcherServlet: Process Response
+        end
+
+    end
+    
     DispatcherServlet ->> Client: HTTP Response
 
 ```

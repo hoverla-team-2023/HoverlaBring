@@ -8,6 +8,8 @@ classDiagram
         - beanDefinitionRegistry: BeanDefinitionRegistry
         - allowedBeanDefinedAnnotations: Set<Annotation>
         + getBeanFactory(): BeanFactory
+        + getBean(Class<?> beanClass): Object
+        + getBean(beanName: String): Object
     }
 
     class BeanDefinitionScanner {
