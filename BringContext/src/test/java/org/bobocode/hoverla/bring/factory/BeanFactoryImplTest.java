@@ -99,7 +99,7 @@ class BeanFactoryImplTest {
   void GetBeanForUnknownBean() {
     // Mocking
     String beanName = "unknownBean";
-    when(beanDefinitionRegistryMock.getBeanDefinition(beanName)).thenReturn(null);
+    when(beanDefinitionRegistryMock.getBeanDefinitionByBeanName(beanName)).thenReturn(null);
 
     // Testing
     assertThrows(BeanCreationException.class, () -> beanFactory.getBean(beanName));
@@ -111,7 +111,7 @@ class BeanFactoryImplTest {
     String beanName = "testBean";
     BeanDefinition beanDefinitionMock = Mockito.mock(BeanDefinition.class);
     when(beanDefinitionMock.getScope()).thenReturn(BeanScope.SINGLETON);
-    when(beanDefinitionRegistryMock.getBeanDefinition(beanName)).thenReturn(beanDefinitionMock);
+    when(beanDefinitionRegistryMock.getBeanDefinitionByBeanName(beanName)).thenReturn(beanDefinitionMock);
 
     // Testing
     when(beanDefinitionMock.getTargetClass()).thenReturn(null);
@@ -124,7 +124,7 @@ class BeanFactoryImplTest {
     String beanName = "testBean";
     BeanDefinition beanDefinitionMock = Mockito.mock(BeanDefinition.class);
     when(beanDefinitionMock.getScope()).thenReturn(BeanScope.SINGLETON);
-    when(beanDefinitionRegistryMock.getBeanDefinition(beanName)).thenReturn(beanDefinitionMock);
+    when(beanDefinitionRegistryMock.getBeanDefinitionByBeanName(beanName)).thenReturn(beanDefinitionMock);
 
     // Testing
     when(beanDefinitionMock.getTargetClass()).thenReturn((Class) NonInstantiableClass.class);
