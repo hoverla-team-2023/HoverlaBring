@@ -105,7 +105,7 @@ Follow these steps to get started with our project:
     return "{Path to your components controllers and controller advices}";
     }}
     ```
-5. **Add the Project as a dependency:**
+5. **Add the Maven build plugin and set packaging to war :**
    ```xml
     <build>
     <plugins>
@@ -125,7 +125,7 @@ Follow these steps to get started with our project:
   ![hoverlastart.png](assets/hoverlastart.png)
   ![tomcatrun.png](assets/tomcatrun.png)
 
-**You can see the Hoverla HelloWorld application in module Bring Web**
+**You can see the Hoverla HelloWorld application in module BringWebDemo**
 ****
 # Hoverla  quirks and features
 
@@ -133,40 +133,43 @@ ___
 
 ### Hoverla Application Context
 
-- **[HoverlaApplicationContext](#hoverlaApplicationContext): The application context is the central interface within a Hoverla-Bring 
+- **[HoverlaApplicationContext](#hoverlaApplicationContext)**: The application context is the central interface within a Hoverla-Bring 
 - application for providing configuration information to the application.
-- **[@Component](#component): These annotations are used to indicate that a class is a source of bean definitions.
+- **[@Component](#component)**: These annotations are used to indicate that a class is a source of bean definitions.
 - The @Component annotation is a class-level annotation.
-- **[@Autowired](#autowired): This annotation provides control over where and how autowiring should be accomplished. It can be used 
+- **[@Autowired](#autowired)**: This annotation provides control over where and how autowiring should be accomplished. It can be used 
 - to autowire
 - bean on the setter method, constructor, a property, or methods with arbitrary names and/or multiple arguments.
-- **[@Scope](#scope): This annotation is used to specify the scope of the beans. It allows you to set the BeanScope value to Singleton 
-- or Prototype.
-- **[BeanPostProcessor](#beanPostProcessor): This is a hook that allows for custom modification of new bean instances, 
+- **[@Scope](#scope)**: This annotation is used to specify the scope of the beans. It allows you to set the BeanScope value to Singleton.
+- **[BeanPostProcessor](#beanPostProcessor)**: This is a hook that allows for custom modification of new bean instances, 
 - for example, checking for marker interfaces or wrapping them with proxies.
-- **[BeanFactoryPostProcessor](#beanFactoryPostProcessor):
+- **[BeanFactoryPostProcessor](#beanFactoryPostProcessor)**:This is the hook that can be invoked after scanning and before t
+- the instantiation of  bean objects
 
 
 ### Hoverla Web 
-- **[Controller](#controller): Controllers in Hoverla-Bring are responsible for processing incoming HTTP requests and returning responses. 
+- **[Controller](#controller)**: Controllers in Hoverla-Bring are responsible for processing incoming HTTP requests and returning responses. 
 - Controllers are defined by adding the @Controller annotation to the class.
-- **[ControllerAdvice](#controllerAdvice): This annotation is used to define global advice that is shared across 
+- **[ControllerAdvice](#controllerAdvice)**: This annotation is used to define global advice that is shared across 
 - multiple @Controller classes.
-- **[ExceptionHandler](#exceptionHandler): This annotation is used to handle exceptions that are thrown during the execution 
+- **[ExceptionHandler](#exceptionHandler)**: This annotation is used to handle exceptions that are thrown during the execution 
 - of @RequestMapping methods.
-- **[PathVariable](#pathVariable): This annotation is used to bind a method parameter to a URI template variable.
-- **[QueryParam](#queryParam): This annotation is used to extract query parameters from the Request URI.
-- **[RequestBody](#requestBody): This annotation is used to bind the HTTP request body with a method parameter.
-- **[RequestMapping](#requestMapping): This annotation is used for mapping web requests onto specific handler classes 
+- **[PathVariable](#pathVariable)**: This annotation is used to bind a method parameter to a URI template variable.
+- **[QueryParam](#queryParam)**: This annotation is used to extract query parameters from the Request URI.
+- **[RequestBody](#requestBody)**: This annotation is used to bind the HTTP request body with a method parameter.
+- **[RequestMapping](#requestMapping)**: This annotation is used for mapping web requests onto specific handler classes 
 - and/or handler methods.
-- **[ResponseBody](#responseBody): This annotation is used to bind the HTTP response body with a method return value.
-- **[StatusCode](#statusCode): This annotation is used to specify the HTTP status code for the response.
-- **[RequestEntity<T>](#requestEntity):
-- **[ResponseEntity<T>](#responseEntity):
+- **[ResponseBody](#responseBody)**: This annotation is used to bind the HTTP response body with a method return value.
+- **[StatusCode](#statusCode)**: This annotation is used to specify the HTTP status code for the response.
+- **[RequestEntity<T>](#requestEntity)**: This class represents an HTTP request entity with headers and a body.
+- **[ResponseEntity<T>](#responseEntity)**: This class represents a response entity that contains a body, headers, and a status code.
 
 #### Application context
-The application context is the central interface within a Hoverla-Bring application for providing configuration 
-information to the application.
+
+This is a Java application that creates an instance of the `HoverlaApplicationContext` class, 
+which is a framework for managing and creating objects in a Java application. 
+The main method of the application retrieves an instance of the HoverlaApplicationContext class and uses it to create objects 
+by implementing class name and interface.
 ___
 
 Example of code
@@ -226,13 +229,13 @@ public class CommonServiceImpl implements CommonService {
 ### @Scope
 
 ---
-
+Example of code : creation custom scope on Component annotated class with returns single instance of class for every bean
 ```java
 @Component
 @Scope(BeanScope.SINGLETON)
 public class MessageService implements CustomService {
 
-    private String hello = "Hello";
+    private String hello = "Hello from Hoverla";
 
     public String getMessage() {
         return hello;
@@ -248,7 +251,15 @@ public class MessageService implements CustomService {
 
 ### BeanPostProcessor
 
-//
+//The scanner scans files for annotation components
+converts all defined classes
+then calls all running bean factory post-processors in turn
+then creates instances ( new myObject marked with Component annotation)
+alternately starts all bean post processors (autowired bean post processor deals with defense injection)
+
+In order for the user to add his custom processors (BeanFactoryPostProcessor BeanPostProcessor)
+it is necessary to create a class that implements one of the interfaces and pass it to the context constructor
+Custom processors will be executed when Dependency Injection has occurred
 
 ___
 
