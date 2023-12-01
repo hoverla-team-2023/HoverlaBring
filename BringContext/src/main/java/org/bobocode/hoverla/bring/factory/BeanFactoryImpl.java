@@ -1,13 +1,5 @@
 package org.bobocode.hoverla.bring.factory;
 
-import lombok.extern.slf4j.Slf4j;
-import org.bobocode.hoverla.bring.bean.BeanDefinition;
-import org.bobocode.hoverla.bring.bean.BeanScope;
-import org.bobocode.hoverla.bring.context.BeanDefinitionRegistry;
-import org.bobocode.hoverla.bring.exception.BeanCreationException;
-import org.bobocode.hoverla.bring.processors.BeanFactoryPostProcessor;
-import org.bobocode.hoverla.bring.processors.BeanPostProcessor;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -15,6 +7,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.bobocode.hoverla.bring.bean.BeanDefinition;
+import org.bobocode.hoverla.bring.bean.BeanScope;
+import org.bobocode.hoverla.bring.context.BeanDefinitionRegistry;
+import org.bobocode.hoverla.bring.exception.BeanCreationException;
+import org.bobocode.hoverla.bring.processors.BeanFactoryPostProcessor;
+import org.bobocode.hoverla.bring.processors.BeanPostProcessor;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * BeanFactoryImpl class is responsible for creation of beans from bean definitions and dependency injection
@@ -105,6 +106,14 @@ public class BeanFactoryImpl implements BeanFactory {
       }
     }
     throw new BeanCreationException("Bean with name " + beanName + "does not have constructor without arguments");
+  }
+
+  /**
+   * this method return all existed BeanFactoryPostProcessors
+   */
+  @Override
+  public Set<BeanFactoryPostProcessor> getBeanFactoryPostProcessors() {
+    return beanFactoryPostProcessors;
   }
 
   /**

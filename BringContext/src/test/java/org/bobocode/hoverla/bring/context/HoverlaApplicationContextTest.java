@@ -1,12 +1,18 @@
 package org.bobocode.hoverla.bring.context;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.bobocode.hoverla.bring.objects.DbConnection;
 import org.bobocode.hoverla.bring.objects.MyService;
 import org.bobocode.hoverla.bring.objects.MyServiceImpl;
 import org.bobocode.hoverla.bring.objects.TestComponent;
+import org.bobocode.hoverla.bring.objects.TestCustomBeanFactoryPostProcessor;
+import org.bobocode.hoverla.bring.objects.TestCustomBeanPostProcessor;
 import org.bobocode.hoverla.bring.objects.TestFirstService;
 import org.bobocode.hoverla.bring.objects.TestSecondService;
 import org.bobocode.hoverla.bring.objects.TestThirdService;
+import org.bobocode.hoverla.bring.utils.LogRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -76,6 +82,17 @@ public class HoverlaApplicationContextTest {
   void shouldThrowExceptionIfMoreThanOneCandidateExist() {
     HoverlaApplicationContext context = new HoverlaApplicationContext("org.bobocode.hoverla.bring.objects");
     assertThrows(IllegalArgumentException.class, () -> context.getBean(DbConnection.class));
+  }
+
+  @Test
+  void registerCustomProcessors() {
+    LogRegistry.clear();
+    HoverlaApplicationContext context = new HoverlaApplicationContext("org.bobocode.hoverla.bring.objects",
+                                                                      Collections.singletonList(new TestCustomBeanFactoryPostProcessor()),
+                                                                      Collections.singletonList(new TestCustomBeanPostProcessor()));
+    List<String> allLogs = LogRegistry.getAllLogs();
+    assertTrue(allLogs.contains(TestCustomBeanPostProcessor.class.getName() + " worked"));
+    assertTrue(allLogs.contains(TestCustomBeanPostProcessor.class.getName() + " worked"));
   }
 
 }
