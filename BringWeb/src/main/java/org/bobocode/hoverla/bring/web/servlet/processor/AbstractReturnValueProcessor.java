@@ -30,7 +30,7 @@ public abstract class AbstractReturnValueProcessor implements ReturnValueProcess
     var converter = converters.stream()
       .filter(c -> c.canWrite(type, contentType))
       .findFirst();
-    converter.ifPresent(c -> log.trace("Found HttpMessageConverter for type {} and content type {}: {}", type, contentType, c.getClass()));
+    converter.ifPresent(c -> log.debug("Found HttpMessageConverter for type {} and content type {}: {}", type, contentType, c.getClass()));
 
     return converter;
   }

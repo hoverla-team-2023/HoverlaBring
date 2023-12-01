@@ -106,6 +106,7 @@ public class AnnotationBasedHandlerExceptionResolver implements HandlerException
         .bean(controllerAdvice)
         .beanType(adviceClass)
         .parameters(method.getParameters())
+        .genericReturnType(method.getGenericReturnType())
         .build();
 
     if (exceptionHandlers.containsKey(exceptionType)) {

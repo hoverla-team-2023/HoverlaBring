@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.bobocode.hoverla.bring.web.annotations.PathVariable;
+import org.bobocode.hoverla.bring.web.exceptions.InvalidPathVariableException;
 import org.bobocode.hoverla.bring.web.exceptions.ObjectDeserializationException;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 import org.bobocode.hoverla.bring.web.util.TypeUtils;
@@ -62,7 +63,11 @@ public class PathVariableArgumentResolver implements HandlerMethodArgumentResolv
     Matcher matcher = pattern.matcher(path);
 
     if (matcher.find()) {
-      return matcher.group(variableName);
+      try {
+        return matcher.group(variableName);
+      } catch (IllegalArgumentException e) {
+        throw new InvalidPathVariableException("Failed to extract value for the path variable: " + variableName, e);
+      }
     }
 
     return null;

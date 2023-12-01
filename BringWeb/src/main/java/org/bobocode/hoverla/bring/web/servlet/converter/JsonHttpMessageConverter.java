@@ -45,7 +45,7 @@ public class JsonHttpMessageConverter implements HttpMessageConverter {
   public void write(Object value, HttpServletResponse response, String contentType) throws IOException {
     var content = getContentType(contentType);
 
-    log.trace("Writing JSON response with Content-Type: {}", content);
+    log.debug("Writing JSON response with Content-Type: {}", content);
     response.setContentType(content);
 
     try {

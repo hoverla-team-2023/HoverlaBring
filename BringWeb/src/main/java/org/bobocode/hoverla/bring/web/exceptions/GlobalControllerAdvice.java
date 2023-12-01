@@ -31,6 +31,13 @@ public class GlobalControllerAdvice {
     return new BringError(exception.getMessage());
   }
 
+  @ExceptionHandler(InvalidPathVariableException.class)
+  @StatusCode(value = 400)
+  public BringError handle(InvalidPathVariableException exception) {
+    log.debug("Handling InvalidPathVariableException by global controller advice", exception);
+    return new BringError(exception.getMessage());
+  }
+
   @ExceptionHandler(NotFoundException.class)
   @StatusCode(value = 404)
   public BringError handle(NotFoundException exception) {
