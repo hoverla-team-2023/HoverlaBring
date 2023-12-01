@@ -1,11 +1,5 @@
 package org.bobocode.hoverla.bring.context;
 
-import lombok.extern.slf4j.Slf4j;
-import org.bobocode.hoverla.bring.annotations.Scope;
-import org.bobocode.hoverla.bring.bean.BeanDefinition;
-import org.bobocode.hoverla.bring.bean.BeanScope;
-import org.bobocode.hoverla.bring.utils.BeanUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -19,12 +13,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.bobocode.hoverla.bring.annotations.Scope;
+import org.bobocode.hoverla.bring.bean.BeanDefinition;
+import org.bobocode.hoverla.bring.bean.BeanScope;
+import org.bobocode.hoverla.bring.utils.BeanUtils;
+
+import lombok.extern.slf4j.Slf4j;
+
 import static org.bobocode.hoverla.bring.utils.PathUtils.getClassName;
 import static org.bobocode.hoverla.bring.utils.PathUtils.getFiles;
 import static org.bobocode.hoverla.bring.utils.PathUtils.getPackageName;
 import static org.bobocode.hoverla.bring.utils.PathUtils.isClass;
 import static org.bobocode.hoverla.bring.utils.PathUtils.toFileSystemPath;
 
+/**
+ * Implementation of {@link BeanDefinitionScanner} for scanning and registering
+ * bean definitions based on specified annotations.
+ */
 @Slf4j
 public class BeanDefinitionScannerImpl implements BeanDefinitionScanner {
 
