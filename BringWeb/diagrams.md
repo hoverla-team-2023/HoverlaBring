@@ -109,8 +109,7 @@ sequenceDiagram
         HttpMessageConverter ->> ReturnValueProcessor: Write Response
         ReturnValueProcessor ->> DispatcherServlet: Process Response
     end
-
-
+    
     alt Exception Handling
         DispatcherServlet ->> HandlerExceptionResolver: Resolve Exception
         HandlerExceptionResolver ->> HandlerExceptionResolver: Find Suitable Resolver
@@ -125,9 +124,7 @@ sequenceDiagram
             HttpMessageConverter ->> ReturnValueProcessor: Write Response
             ReturnValueProcessor ->> DispatcherServlet: Process Response
         end
-
     end
-    
     DispatcherServlet ->> Client: HTTP Response
 
 ```
