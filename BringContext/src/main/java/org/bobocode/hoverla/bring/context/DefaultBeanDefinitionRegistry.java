@@ -9,9 +9,12 @@ import java.util.stream.Collectors;
 
 import org.bobocode.hoverla.bring.bean.BeanDefinition;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Default class in context module responsible for BeanDefinition storing
  */
+@Slf4j
 public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
 
   private final Map<String, BeanDefinition> beanDefinitions = new HashMap<>();
@@ -64,6 +67,7 @@ public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
       String msg = String.join(",", beanDefinitionsByClass.stream().map(bd -> bd.getTargetClass().getName()).collect(Collectors.toList()));
       throw new IllegalArgumentException("More than 1 bean found for class " + beanClass.getName() + " defined bean names" + msg);
     }
+    log.debug("Found next BeanDefinition: {} for class {}", beanDefinitionsByClass.get(0), beanClass.getName());
     return beanDefinitionsByClass.get(0);
   }
 

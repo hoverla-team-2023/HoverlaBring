@@ -100,8 +100,7 @@ public interface BeanFactory {
   Collection<BeanDefinition> getRegisteredBeanDefinitions();
 
   /**
-   * get list of created beans existed in BeanFactory
-   * @return
+   * return list of created beans existed in BeanFactory
    */
   Collection<Object> getAllBeans();
 
