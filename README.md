@@ -1,6 +1,6 @@
 ![bring.png](assets/bring.png)
 
-# The Best or Nothing - Hoverla-Bring
+# Hoverla Bring - The Best or Nothing 
 
 [![Coverage](http://ec2-3-65-176-142.eu-central-1.compute.amazonaws.com:9000/api/project_badges/measure?project=hoverla-team-2023_HoverlaBring_AYwIBAvijYd-lSknBhZO&metric=coverage&token=sqb_7e5c712a7a7d795a06fca18de48eddc5514e1a54)](http://ec2-3-65-176-142.eu-central-1.compute.amazonaws.com:9000/dashboard?id=hoverla-team-2023_HoverlaBring_AYwIBAvijYd-lSknBhZO)
 [![Duplicated Lines (%)](http://ec2-3-65-176-142.eu-central-1.compute.amazonaws.com:9000/api/project_badges/measure?project=hoverla-team-2023_HoverlaBring_AYwIBAvijYd-lSknBhZO&metric=duplicated_lines_density&token=sqb_7e5c712a7a7d795a06fca18de48eddc5514e1a54)](http://ec2-3-65-176-142.eu-central-1.compute.amazonaws.com:9000/dashboard?id=hoverla-team-2023_HoverlaBring_AYwIBAvijYd-lSknBhZO)
@@ -151,9 +151,9 @@ ___
 - **[Controller](#controller)**: Controllers in Hoverla-Bring are responsible for processing incoming HTTP requests and returning responses. 
 - Controllers are defined by adding the @Controller annotation to the class.
 - **[ControllerAdvice](#controllerAdvice)**: This annotation is used to define global advice that is shared across 
-- multiple @Controller classes.
+- multiple `@Controller` classes.
 - **[ExceptionHandler](#exceptionHandler)**: This annotation is used to handle exceptions that are thrown during the execution 
-- of @RequestMapping methods.
+- of `@RequestMapping` methods.
 - **[PathVariable](#pathVariable)**: This annotation is used to bind a method parameter to a URI template variable.
 - **[QueryParam](#queryParam)**: This annotation is used to extract query parameters from the Request URI.
 - **[RequestBody](#requestBody)**: This annotation is used to bind the HTTP request body with a method parameter.
@@ -172,7 +172,7 @@ The main method of the application retrieves an instance of the HoverlaApplicati
 by implementing class name and interface.
 ___
 
-Example of code
+Example:
 
 ```java
 public class Application {
@@ -189,13 +189,23 @@ public class Application {
 
 }
 ```
+---
 
 ### @Component and @Autowired
 
 
----
+Creation custom components which  will be maneged by BringContext.
 
-Example of code : creation custom components which  will be maneged by BringContext 
+`@Component` is used to declare a class as a Bring bean, indicating that it should be managed by the Bring IoC 
+This annotation is often applied to classes that represent services, 
+repositories, or other components in a Bring application.
+
+On the other hand,`@Autowired`is used to inject dependencies automatically. 
+When Bring encounters this annotation, it looks for a compatible bean in its container and 
+injects into.
+
+Example:
+
 
 ```java
 
@@ -226,10 +236,16 @@ public class CommonServiceImpl implements CommonService {
 
 }
 ```
-### @Scope
 
 ---
-Example of code : creation custom scope on Component annotated class with returns single instance of class for every bean
+### @Scope
+
+
+Creation custom scope on Component annotated class with returns single instance of class for every bean.
+For example, when you annotate a class with `@Scope`("singleton"), it means that a single instance of 
+the bean will be created and shared everywhere.
+
+Example:
 ```java
 @Component
 @Scope(BeanScope.SINGLETON)
@@ -243,23 +259,55 @@ public class MessageService implements CustomService {
 
 }
 ```
-// You can create and manage internal Bean creation processes implementing own custom processors
 
+---
 ### Interface - BeanFactoryPostProcessor
 
-// BeanFactoryPostProcessor is processor that is executed bt BeanFactory after scanning by path finished
 
-### BeanPostProcessor
+BeanFactoryPostProcessor is processor that is executed bt BeanFactory after scanning by path finished.
+Interface used to modify bean definitions before the beans are instantiated. 
+It provides a hook to customize the configuration of beans at the factory level.
 
-//The scanner scans files for annotation components
-converts all defined classes
-then calls all running bean factory post-processors in turn
-then creates instances ( new myObject marked with Component annotation)
-alternately starts all bean post processors (autowired bean post processor deals with defense injection)
+Example:
+```java
 
-In order for the user to add his custom processors (BeanFactoryPostProcessor BeanPostProcessor)
-it is necessary to create a class that implements one of the interfaces and pass it to the context constructor
-Custom processors will be executed when Dependency Injection has occurred
+public class HoverlaBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
+  public HoverlaBeanFactoryPostProcessor(String path, List<BeanFactoryPostProcessor> beanFactoryPostProcessors, List<BeanPostProcessor> beanPostProcessors) {
+    addCustomProcessors(beanFactoryPostProcessors, beanPostProcessors);
+    beanDefinitionScanner.loadBeanDefinitions(path);
+    beanFactory.getBeanFactoryPostProcessors().forEach(bfpp -> bfpp.postProcessBeanFactory(beanFactory));
+    this.doProcessBeans();
+  }
+}
+
+```
+---
+### Interface - BeanPostProcessor
+
+
+Interface used to perform additional processing after the instantiation of beans. 
+It provides a hook to customize or enhance the behavior of beans after they are created.
+You can create and manage internal Bean creation processes implementing own custom processors.
+
+Example:
+```java
+
+public class HoverlaBeanPostProcessor implements BeanPostProcessor {
+  @Override
+  public Object tryToInitializeSingletonBean(String beanName) {
+    if (beans.containsKey(beanName)) {
+      return beans.get(beanName);
+    }
+    Object createdBean;
+    for (BeanPostProcessor bpp : beanPostProcessors) {
+      createdBean = bpp.postProcessBean(createdBean, beanName);
+    }
+    beans.put(beanName, createdBean);
+    return createdBean;
+  }
+}
+
+```
 
 ___
 
