@@ -41,14 +41,14 @@ class DefaultBeanDefinitionRegistryTest {
 
     registry.registerBeanDefinition(beanDefinitionName, beanDefinition);
 
-    BeanDefinition registeredBeanDefinition = registry.getBeanDefinition(beanDefinitionName);
+    BeanDefinition registeredBeanDefinition = registry.getBeanDefinitionByBeanName(beanDefinitionName);
 
     assertNotNull(registeredBeanDefinition);
   }
 
   @Test
   void registerBeanDefinition_getBeanDefinitionShouldThrowErrorWhenBeanDefinitionNameIsNull() {
-    assertThrows(IllegalArgumentException.class,()-> registry.getBeanDefinition(null));
+    assertThrows(IllegalArgumentException.class,()-> registry.getBeanDefinitionByBeanName(null));
   }
 
   @Test

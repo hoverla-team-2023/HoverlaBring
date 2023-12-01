@@ -2,8 +2,10 @@ package org.bobocode.hoverla.bring.context;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bobocode.hoverla.bring.bean.BeanDefinition;
 
@@ -42,11 +44,27 @@ public class DefaultBeanDefinitionRegistry implements BeanDefinitionRegistry {
    * @return the BeanDefinition associated with the given name, or null if no such definition exists.
    */
   @Override
-  public BeanDefinition getBeanDefinition(String beanName) {
+  public BeanDefinition getBeanDefinitionByBeanName(String beanName) {
     if (beanName == null) {
       throw new IllegalArgumentException("Bean name should not be null");
     }
     return beanDefinitions.get(beanName);
+  }
+
+  @Override
+  public BeanDefinition getBeanDefinitionByBeanClass(Class<?> beanClass) {
+    List<BeanDefinition> beanDefinitionsByClass = beanDefinitions.values()
+      .stream()
+      .filter(bd -> beanClass.isAssignableFrom(bd.getTargetClass()))
+      .collect(Collectors.toList());
+    if (beanDefinitionsByClass.isEmpty()) {
+      throw new IllegalArgumentException("No beans found by class " + beanClass.getName());
+    }
+    if (beanDefinitionsByClass.size() > 1) {
+      String msg = String.join(",", beanDefinitionsByClass.stream().map(bd -> bd.getTargetClass().getName()).collect(Collectors.toList()));
+      throw new IllegalArgumentException("More than 1 bean found for class " + beanClass.getName() + " defined bean names" + msg);
+    }
+    return beanDefinitionsByClass.get(0);
   }
 
   /**

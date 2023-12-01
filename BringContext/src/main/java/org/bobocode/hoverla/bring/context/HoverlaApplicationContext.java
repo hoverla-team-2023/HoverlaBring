@@ -47,6 +47,16 @@ public class HoverlaApplicationContext implements ApplicationContext {
     return beanFactory;
   }
 
+  @Override
+  public Object getBean(String beanName) {
+    return beanFactory.getBean(beanName);
+  }
+
+  @Override
+  public Object getBean(Class<?> beanClass) {
+    return beanFactory.getBean(beanClass);
+  }
+
   /**
    * This method is responsible for initialization of required HoverlaApplicationContext params
    */

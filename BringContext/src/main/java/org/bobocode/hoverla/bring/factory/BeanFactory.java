@@ -43,6 +43,17 @@ public interface BeanFactory {
    * @return the bean instance associated with the given name
    */
   Object getBean(String beanName);
+
+  /**
+   * Retrieves the bean instance by class of bean ar classes that extends/implements class given in @param beanClass
+   *
+   * @param beanClass the class of the bean to retrieve
+   *
+   * @return the bean instance associated with the given name
+   * Please note if you want to get bean by interface that has 2 or more implementation marked with @Component
+   * you will get exception
+   */
+  Object getBean(Class<?> beanClass);
   /**
    * Attempts to initialize a singleton bean with the specified name. This method is intended to be used for eagerly
    * initializing singleton beans during application startup.
@@ -88,5 +99,10 @@ public interface BeanFactory {
 
   Collection<BeanDefinition> getRegisteredBeanDefinitions();
 
+  /**
+   * get list of created beans existed in BeanFactory
+   * @return
+   */
   Collection<Object> getAllBeans();
+
 }

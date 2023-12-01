@@ -44,7 +44,7 @@ public class BeanFactoryImpl implements BeanFactory {
    */
   @Override
   public Object getBean(String beanName) {
-    BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
+    BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinitionByBeanName(beanName);
     if (beanDefinition == null) {
       throw new BeanCreationException("Bean definition for bean with name: " + beanName + " does not exist");
     }
@@ -52,6 +52,12 @@ public class BeanFactoryImpl implements BeanFactory {
       return tryToInitializeSingletonBean(beanName);
     }
     throw new BeanCreationException("Scope: " + beanDefinition.getScope() + " is not supported");
+  }
+
+  @Override
+  public Object getBean(Class<?> beanClass) {
+    String beanName = beanDefinitionRegistry.getBeanDefinitionByBeanClass(beanClass).getBeanName();
+    return getBean(beanName);
   }
 
   @Override
@@ -83,7 +89,7 @@ public class BeanFactoryImpl implements BeanFactory {
   }
 
   private Object doCreateSingletonBean(String beanName) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-    BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
+    BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinitionByBeanName(beanName);
     if (beanDefinition == null) {
       throw new BeanCreationException("Can't find BeanDefinition for name" + beanName);
     }
@@ -130,7 +136,7 @@ public class BeanFactoryImpl implements BeanFactory {
    */
   @Override
   public BeanDefinition getBeanDefinitionByBeanName(String beanName) {
-    BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
+    BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinitionByBeanName(beanName);
     if (beanDefinition == null) {
       log.warn("Can't find BeanDefinition with name {}", beanName);
     }
