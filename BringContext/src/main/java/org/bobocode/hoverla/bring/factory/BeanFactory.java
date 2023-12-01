@@ -1,11 +1,12 @@
 package org.bobocode.hoverla.bring.factory;
 
+import java.util.Collection;
+import java.util.Set;
+
 import org.bobocode.hoverla.bring.bean.BeanDefinition;
 import org.bobocode.hoverla.bring.context.BeanDefinitionRegistry;
 import org.bobocode.hoverla.bring.processors.BeanFactoryPostProcessor;
 import org.bobocode.hoverla.bring.processors.BeanPostProcessor;
-
-import java.util.Collection;
 
 /**
  * The {@code BeanFactory} interface represents a central registry for managing beans in a bean-oriented application context.
@@ -65,6 +66,12 @@ public interface BeanFactory {
    */
 
   Object tryToInitializeSingletonBean(String beanName);
+
+  /**
+   * this method return all existed BeanFactoryPostProcessors
+   */
+  Set<BeanFactoryPostProcessor> getBeanFactoryPostProcessors();
+
   /**
    * Adds a {@link BeanFactoryPostProcessor} to the bean factory. Post-processors are invoked during the bean
    * factory's initialization phase, allowing for customization of bean definitions before the actual bean
@@ -100,7 +107,7 @@ public interface BeanFactory {
   Collection<BeanDefinition> getRegisteredBeanDefinitions();
 
   /**
-   * return list of created beans existed in BeanFactory
+   * get list of created beans existed in BeanFactory
    */
   Collection<Object> getAllBeans();
 
