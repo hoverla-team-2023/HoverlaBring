@@ -149,16 +149,13 @@ ___
 ### Hoverla Web 
 - **[Controller](#controller)**: Controllers in Hoverla-Bring are responsible for processing incoming HTTP requests and returning responses. 
 - Controllers are defined by adding the @Controller annotation to the class.
-- **[ControllerAdvice](#controllerAdvice)**: This annotation is used to define global advice that is shared across 
-- multiple `@Controller` classes.
-- **[ExceptionHandler](#exceptionHandler)**: This annotation is used to handle exceptions that are thrown during the execution 
-- of `@RequestMapping` methods.
+- **[ControllerAdvice](#controllerAdvice)**: This annotation is used to define global advice that is shared across multiple `@Controller` classes.
+- **[ExceptionHandler](#exceptionHandler)**: This annotation is used to handle exceptions that are thrown during the execution of `@RequestMapping` methods.
 - **[PathVariable](#pathVariable)**: This annotation is used to bind a method parameter to a URI template variable.
 - **[QueryParam](#queryParam)**: This annotation is used to extract query parameters from the Request URI.
 - **[RequestBody](#requestBody)**: This annotation is used to bind the HTTP request body with a method parameter.
 - **[ResponseBody](#responseBody)**: This annotation is used to bind the HTTP response body with a method return value.
-- **[RequestMapping](#requestMapping)**: This annotation is used for mapping web requests onto specific handler classes
-- and/or handler methods.
+- **[RequestMapping](#requestMapping)**: This annotation is used for mapping web requests onto specific handler classes and/or handler methods.
 - **[StatusCode](#statusCode)**: This annotation is used to specify the HTTP status code for the response.
 - **[ResponseEntity<T>](#responseEntity)**: This class represents a response entity that contains a body, headers, and a status code.
 - **[RequestEntity<T>](#requestEntity)**: This class represents an HTTP request entity with headers and a body.
@@ -395,7 +392,7 @@ Example:
 public ResponseEntity<String> getEntityById(@PathVariable("id") Long id) {
 // Logic to fetch entity by id
   return new ResponseEntity<>(
-  "Entity with ID: " + id,                                     // response body
+  "Entity with ID: " + id,                       // response body
   Map.of("My-Header", List.of("testValue")),     // response headers
   201                                            // response status code
   );
@@ -412,7 +409,7 @@ Example:
 public ResponseEntity<String> getEntitiesByType(@QueryParam("type") String entityType) {
 // Logic to fetch entities by type
   return new ResponseEntity<>(
-  "Entities of type: " + entityType,                                     // response body
+  "Entities of type: " + entityType,             // response body
   Map.of("My-Header", List.of("testValue")),     // response headers
   201                                            // response status code
   );
