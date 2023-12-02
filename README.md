@@ -138,8 +138,7 @@ ___
 - application for providing configuration information to the application.
 - **[@Component](#component)**: These annotations are used to indicate that a class is a source of bean definitions.
 - The @Component annotation is a class-level annotation.
-- **[@Autowired](#autowired)**: This annotation provides control over where and how autowiring should be accomplished. It can be used 
-- to autowire bean on the setter method, constructor, a property, or methods with arbitrary names and/or multiple arguments.
+- **[@Autowired](#autowired)**: Fields annotated with `@Autowired` will be automatically populated by the Bring IoC container, resolving the corresponding dependency.
 - **[@Scope](#scope)**: This annotation is used to specify the scope of the beans. It allows you to set the BeanScope value to Singleton.
 - **[BeanPostProcessor](#beanPostProcessor)**: This is a hook that allows for custom modification of new bean instances, 
 - for example, checking for marker interfaces or wrapping them with proxies.
@@ -309,6 +308,15 @@ public class HoverlaBeanPostProcessor implements BeanPostProcessor {
 
 ```
 
+Both custom BeanPostProcessor and BeanFactoryPostProcessor can be added throw constructor
+
+```java
+
+  HoverlaApplicationContext context = new HoverlaApplicationContext("{path to your components}",
+                                                                      Collections.singletonList(new TestCustomBeanFactoryPostProcessor()),
+                                                                      Collections.singletonList(new TestCustomBeanPostProcessor()));
+```
+
 ___
 
 # HTTP Server
@@ -386,7 +394,11 @@ Example:
 @RequestMapping(path = "/bobocode/hoverla/{id}", method = RequestMethod.GET)
 public ResponseEntity<String> getEntityById(@PathVariable("id") Long id) {
 // Logic to fetch entity by id
-return ResponseEntity.ok("Entity with ID: " + id);
+  return new ResponseEntity<>(
+  "Entity with ID: " + id,                                     // response body
+  Map.of("My-Header", List.of("testValue")),     // response headers
+  201                                            // response status code
+  );
 }
 ```
 ___
@@ -399,7 +411,11 @@ Example:
 @RequestMapping(path = "/bobocode/hoverla", method = RequestMethod.GET)
 public ResponseEntity<String> getEntitiesByType(@QueryParam("type") String entityType) {
 // Logic to fetch entities by type
-return ResponseEntity.ok("Entities of type: " + entityType);
+  return new ResponseEntity<>(
+  "Entities of type: " + entityType,                                     // response body
+  Map.of("My-Header", List.of("testValue")),     // response headers
+  201                                            // response status code
+  );
 }
 ```
 ___
@@ -434,8 +450,8 @@ Example:
 
 ```java
 @RequestMapping(path = "/bobocode/hoverla", method = RequestMethod.GET)
-public ResponseEntity<String> helloWorld() {
-return ResponseEntity.ok("Hello, Hoverla!");
+public String helloWorld() {
+  return "Hello, Hoverla!";
 }
 ```
 ___
@@ -498,9 +514,9 @@ ___
 `RequestEntity<T>` This class represents an HTTP request entity with headers and a body.:
 
 ```java
-public Object resolveArgument(HttpServletRequest request, HttpServletResponse response) {
-  var body = readRequestBody(genericType, request);
-  return new RequestEntity<>(getHeaders(request), body); // request body
-  }
+@RequestMapping(path = "/bobocode/hoverla-request-entity", method = RequestMethod.POST)
+public void testRequestEntity(RequestEntity<TestDto> requestEntity) {
+  System.out.println(requestEntity);
+}
 ```
 ___
