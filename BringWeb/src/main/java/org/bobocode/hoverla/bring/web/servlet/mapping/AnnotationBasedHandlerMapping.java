@@ -40,15 +40,15 @@ public class AnnotationBasedHandlerMapping implements HandlerMapping {
    */
   public AnnotationBasedHandlerMapping(Object... beans) {
     for (Object bean : beans) {
-      if(isController(bean)){
+      if (isController(bean)) {
         for (Method method : bean.getClass().getMethods()) {
           if (method.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping mapping = method.getAnnotation(RequestMapping.class);
             String path = mapping.path();
             RequestMethod requestMethod = mapping.method();
             handlerMethods.put(path + ":" + requestMethod.name(),
-                    new HandlerMethod(bean.getClass(), method, path, method.getParameters(), bean, requestMethod,
-                                      method.getGenericReturnType()));
+                               new HandlerMethod(bean.getClass(), method, path, method.getParameters(), bean, requestMethod,
+                                                 method.getGenericReturnType()));
           }
         }
       }
@@ -68,12 +68,20 @@ public class AnnotationBasedHandlerMapping implements HandlerMapping {
   public HandlerMethod getHandlerMethod(HttpServletRequest request) {
     String requestPath = request.getRequestURI();
     RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+
+    log.debug("Finding handler method for path: {} and method: {}", requestPath, requestMethod);
+
     for (Map.Entry<String, HandlerMethod> entry : handlerMethods.entrySet()) {
       HandlerMethod handlerMethod = entry.getValue();
       if (pathMatcher.match(handlerMethod.getPath(), requestPath) && requestMethod.name().equals(handlerMethod.getRequestMethod().name())) {
+        log.debug("Handler method found for path: {} and method: {}.", requestPath, requestMethod);
+
         return handlerMethod;
       }
     }
+
+    log.debug("No handler method found for path: {} and method: {}", requestPath, requestMethod);
+
     return null;
   }
 

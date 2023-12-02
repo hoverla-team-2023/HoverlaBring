@@ -12,6 +12,8 @@ import org.bobocode.hoverla.bring.web.servlet.converter.HttpMessageConverter;
 import org.bobocode.hoverla.bring.web.servlet.entity.ResponseEntity;
 import org.bobocode.hoverla.bring.web.servlet.handler.HandlerMethod;
 
+import lombok.extern.slf4j.Slf4j;
+
 import static org.bobocode.hoverla.bring.web.util.TypeUtils.isResponseEntity;
 
 /**
@@ -23,6 +25,7 @@ import static org.bobocode.hoverla.bring.web.util.TypeUtils.isResponseEntity;
  * @see PojoReturnValueProcessor
  * @see TextPlainReturnValueProcessor
  */
+@Slf4j
 public class ResponseEntityReturnValueProcessor extends AbstractReturnValueProcessor {
 
   public ResponseEntityReturnValueProcessor(List<HttpMessageConverter> converters) {
@@ -38,13 +41,20 @@ public class ResponseEntityReturnValueProcessor extends AbstractReturnValueProce
   public boolean processReturnValue(Object returnValue,
                                     HandlerMethod handlerMethod,
                                     HttpServletResponse response) throws IOException {
+    log.debug("Processing return value: {}", returnValue);
+
     if (returnValue instanceof ResponseEntity<?> responseEntity) {
+
+      log.debug("Detected return value as ResponseEntity");
+
       var body = responseEntity.getBody();
       var contentType = getContentType(responseEntity);
 
       var converter = findConverter(body.getClass(), contentType);
 
       if (converter.isPresent()) {
+        log.debug("Found converter for return value type: {}", body.getClass());
+
         setHeaders(responseEntity.getHeaders(), response);
 
         converter.get().write(body, response, contentType);
